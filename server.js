@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 // 1. Роут для авторизации.
 app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     if (username === 'admin' && password === 'admin') {
         const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
