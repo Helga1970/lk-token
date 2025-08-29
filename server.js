@@ -23,7 +23,7 @@ app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
     if (username === 'admin' && password === 'admin') {
-        const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
 
         res.cookie('token', token, {
             httpOnly: true,
