@@ -147,7 +147,7 @@
     </div>
     
     <script>
-        // URL вашего сервера. Исправлено для работы на Netlify.
+        // ИСПРАВЛЕНИЕ: Используем относительный путь для запросов.
         const API_URL = '';
 
         function togglePassword() {
@@ -168,7 +168,10 @@
 
             const checkAuth = async () => {
                 try {
-                    const response = await fetch(`${API_URL}/api/dashboard`);
+                    // ИСПРАВЛЕНИЕ: Добавили { credentials: 'include' }
+                    const response = await fetch(`${API_URL}/api/dashboard`, {
+                        credentials: 'include'
+                    });
                     if (response.ok) {
                         const data = await response.json();
                         welcomeMessage.textContent = data.message;
@@ -191,13 +194,14 @@
                 const password = document.getElementById('password').value;
 
                 try {
+                    // ИСПРАВЛЕНИЕ: Добавили { credentials: 'include' } и исправили тело запроса.
                     const response = await fetch(`${API_URL}/api/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        // Исправлено: теперь отправляем 'email' вместо 'username'
-                        body: JSON.stringify({ email, password })
+                        body: JSON.stringify({ email, password }),
+                        credentials: 'include'
                     });
 
                     const data = await response.json();
@@ -219,7 +223,10 @@
 
             logoutButton.addEventListener('click', async () => {
                 try {
-                    await fetch(`${API_URL}/api/logout`);
+                    // ИСПРАВЛЕНИЕ: Добавили { credentials: 'include' }
+                    await fetch(`${API_URL}/api/logout`, {
+                        credentials: 'include'
+                    });
                     window.location.reload();
                 } catch (error) {
                     console.error('Ошибка при выходе:', error);
