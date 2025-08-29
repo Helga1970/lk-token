@@ -92,64 +92,59 @@
             line-height: 1.5;
         }
         .form-links a {
-            color: #fb4d35;
+            color: #fb4d35; /* Фирменный коралловый цвет для ссылок */
             text-decoration: none;
-            font-weight: 400;
+            font-weight: 400; /* Не жирный */
         }
         .form-links a:hover {
             text-decoration: underline;
         }
+        /* Стиль для сообщения об успешном восстановлении, чтобы ссылки были как обычный текст */
         .success-message-links a {
-            color: #fb4d35 !important;
-            font-weight: 400 !important;
-            text-decoration: none !important;
+            color: #fb4d35 !important; /* Убедимся, что цвет остается коралловым */
+            font-weight: 400 !important; /* Убедимся, что не жирный */
+            text-decoration: none !important; /* Убедимся, что нет подчеркивания по умолчанию */
         }
         .success-message-links a:hover {
             text-decoration: underline !important;
         }
-        .dashboard-content {
-            display: none; /* Скрываем по умолчанию */
-            text-align: left;
-        }
+
     </style>
 </head>
 <body>
     <div class="login-box">
-        <div id="login-form-container">
-            <h2 id="form-title">Вход в личный кабинет</h2>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Пароль</label>
-                    <div class="password-container">
-                        <input type="password" id="password" required>
-                        <button type="button" class="password-toggle" id="password-toggle-btn" onclick="togglePassword()">Показать</button>
-                    </div>
-                </div>
-                <button type="submit" class="login-button">Войти</button>
-            </form>
-            <p id="message"></p>
-            <div class="form-links">
-                <p id="registration-link-container"><a href="https://pro-culinaria.ru/registration#">Зарегистрироваться</a></p>
-                <p id="reset-link-container"><a href="#" onclick="showForm('reset')">Восстановить пароль</a></p>
-                <p id="login-link-container" style="display: none;"><a href="#" onclick="showForm('login')">Вернуться к входу</a></p>
+        <h2 id="form-title">Вход в личный кабинет</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
             </div>
-        </div>
+            <div class="input-group">
+                <label for="password">Пароль</label>
+                <div class="password-container">
+                    <input type="password" id="password" required>
+                    <button type="button" class="password-toggle" id="password-toggle-btn" onclick="togglePassword()">Показать</button>
+                </div>
+            </div>
+            <button type="submit" class="login-button">Войти</button>
+        </form>
 
-        <div id="dashboard-container" class="dashboard-content">
-            <h2 id="welcome-message"></h2>
-            <p>Вы успешно авторизованы! Здесь будут ваши личные данные.</p>
-            <button class="login-button" id="logout-button">Выйти</button>
+        <form id="resetPasswordForm" style="display: none;">
+            <div class="input-group">
+                <label for="reset-email">e-mail:</label>
+                <input type="email" id="reset-email" name="email" required>
+            </div>
+            <button type="submit" class="login-button">Восстановить пароль</button>
+        </form>
+
+        <p id="message"></p>
+        <div class="form-links">
+            <p id="registration-link-container"><a href="https://pro-culinaria.ru/registration#">Зарегистрироваться</a></p>
+            <p id="reset-link-container"><a href="#" onclick="showForm('reset')">Восстановить пароль</a></p>
+            <p id="login-link-container" style="display: none;"><a href="#" onclick="showForm('login')">Вернуться к входу</a></p>
         </div>
     </div>
-    
     <script>
-        // ИСПРАВЛЕНИЕ: Используем относительный путь для запросов.
-        const API_URL = '';
-
         function togglePassword() {
             const passwordField = document.getElementById('password');
             const passwordToggleButton = document.getElementById('password-toggle-btn');
@@ -158,82 +153,123 @@
             passwordToggleButton.textContent = (type === 'password') ? 'Показать' : 'Скрыть';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function showForm(formType) {
             const loginForm = document.getElementById('loginForm');
+            const resetForm = document.getElementById('resetPasswordForm');
+            const title = document.getElementById('form-title');
+            const regLink = document.getElementById('registration-link-container'); // Теперь правильно ссылается на p с ID
+            const resetLink = document.getElementById('reset-link-container');
+            const loginLink = document.getElementById('login-link-container');
             const messageElement = document.getElementById('message');
-            const loginContainer = document.getElementById('login-form-container');
-            const dashboardContainer = document.getElementById('dashboard-container');
-            const welcomeMessage = document.getElementById('welcome-message');
-            const logoutButton = document.getElementById('logout-button');
 
-            const checkAuth = async () => {
-                try {
-                    // ИСПРАВЛЕНИЕ: Добавили { credentials: 'include' }
-                    const response = await fetch(`${API_URL}/api/dashboard`, {
-                        credentials: 'include'
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        welcomeMessage.textContent = data.message;
-                        loginContainer.style.display = 'none';
-                        dashboardContainer.style.display = 'block';
-                    } else {
-                        loginContainer.style.display = 'block';
-                        dashboardContainer.style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error('Ошибка проверки авторизации:', error);
-                    loginContainer.style.display = 'block';
-                    dashboardContainer.style.display = 'none';
+            messageElement.textContent = ''; // Очистка сообщения при переключении форм
+            messageElement.classList.remove('success-message-links'); // Убираем класс для ссылок
+
+            if (formType === 'login') {
+                loginForm.style.display = 'block';
+                resetForm.style.display = 'none';
+                title.textContent = 'Вход в личный кабинет';
+                regLink.style.display = 'block'; // Показываем Зарегистрироваться
+                resetLink.style.display = 'block';
+                loginLink.style.display = 'none';
+            } else if (formType === 'reset') {
+                loginForm.style.display = 'none';
+                resetForm.style.display = 'block';
+                title.textContent = 'Восстановление пароля';
+                regLink.style.display = 'none';
+                resetLink.style.display = 'none'; // Скрываем ссылку "Восстановить пароль"
+                loginLink.style.display = 'block';
+            }
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageElement = document.getElementById('message');
+            const loginUrl = '/api/prodamus-webhook';
+
+            try {
+                const response = await fetch(loginUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'lk.html';
+                } else {
+                    messageElement.textContent = data.message || 'Неверный email или пароль';
+                    messageElement.style.color = 'red'; // Убедимся, что ошибка красная
                 }
-            };
+            } catch (error) {
+                console.error('Ошибка при авторизации:', error);
+                messageElement.textContent = 'Произошла ошибка при попытке входа. Пожалуйста, попробуйте позже.';
+                messageElement.style.color = 'red';
+            }
+        });
 
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        resetPasswordForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('reset-email').value.trim();
+            const messageElement = document.getElementById('message');
+            const formElement = document.getElementById('resetPasswordForm');
+            const regLinkContainer = document.getElementById('registration-link-container');
+            const loginLinkContainer = document.getElementById('login-link-container');
+            const resetLinkContainer = document.getElementById('reset-link-container');
 
-                try {
-                    // ИСПРАВЛЕНИЕ: Добавили { credentials: 'include' } и исправили тело запроса.
-                    const response = await fetch(`${API_URL}/api/login`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email, password }),
-                        credentials: 'include'
-                    });
+            messageElement.textContent = 'Обработка...';
+            messageElement.style.color = '#333';
+            messageElement.classList.remove('success-message-links'); // Убираем класс, если был
 
-                    const data = await response.json();
+            // Скрыть все ссылки перед отправкой
+            regLinkContainer.style.display = 'none';
+            loginLinkContainer.style.display = 'none';
+            resetLinkContainer.style.display = 'none';
 
-                    if (response.ok) {
-                        messageElement.textContent = 'Успешный вход!';
-                        messageElement.style.color = 'green';
-                        window.location.reload();
-                    } else {
-                        messageElement.textContent = data.message || 'Неверный email или пароль';
-                        messageElement.style.color = 'red';
-                    }
-                } catch (error) {
-                    console.error('Ошибка при авторизации:', error);
-                    messageElement.textContent = 'Произошла ошибка при попытке входа.';
-                    messageElement.style.color = 'red';
+            try {
+                const response = await fetch('https://pro-culinaria-lk.proculinaria-book.ru/.netlify/functions/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(result.error || `Server returned error: ${response.status} - ${response.statusText}`);
                 }
-            });
 
-            logoutButton.addEventListener('click', async () => {
-                try {
-                    // ИСПРАВЛЕНИЕ: Добавили { credentials: 'include' }
-                    await fetch(`${API_URL}/api/logout`, {
-                        credentials: 'include'
-                    });
-                    window.location.reload();
-                } catch (error) {
-                    console.error('Ошибка при выходе:', error);
-                }
-            });
+                formElement.style.display = 'none';
+                document.getElementById('form-title').textContent = 'Восстановление пароля';
+                messageElement.style.color = 'green'; // Сообщение об успехе зеленое
+                messageElement.classList.add('success-message-links'); // Добавляем класс для стилизации ссылок в сообщении
+                messageElement.innerHTML = `Новый пароль отправлен на вашу почту.
+                    <br><a href="#" onclick="showForm('login')">Вернуться к входу</a>
+                    <br><a href="https://pro-culinaria.ru/registration#">Зарегистрироваться</a>`;
 
-            checkAuth();
+                // При успешном восстановлении, после показа сообщения, не надо показывать старые ссылки.
+                // Они уже встроены в messageElement.innerHTML.
+                // showForm('login') вызовется, когда пользователь кликнет "Вернуться к входу"
+
+            } catch (e) {
+                console.error('Ошибка:', e);
+                messageElement.textContent = e.message || 'Произошла ошибка при восстановлении пароля. Пожалуйста, попробуйте позже.';
+                messageElement.style.color = 'red';
+                messageElement.classList.remove('success-message-links'); // Убираем класс, если была ошибка
+                
+                // В случае ошибки показываем все ссылки, кроме ссылки "Вернуться к входу"
+                regLinkContainer.style.display = 'block';
+                resetLinkContainer.style.display = 'block';
+                loginLinkContainer.style.display = 'none'; // Скрываем "Вернуться к входу"
+            }
         });
     </script>
 </body>
