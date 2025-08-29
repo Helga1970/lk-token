@@ -49,7 +49,7 @@ app.get('/api/dashboard', (req, res) => {
             return res.status(403).json({ message: 'Доступ запрещен' });
         }
         // Изменение для отладки
-        res.json({ message: 'Привет!' });
+        res.json({ message: 'Привет, ' + email + '!' });
     });
 });
 
