@@ -36,8 +36,7 @@ app.post('/api/login', (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
-            domain: '.netlify.app',
-            sameSite: 'Lax'
+            sameSite: 'None'
         }).status(200).json({ success: true });
     } else {
         res.status(401).json({ message: 'Неверный email или пароль' });
@@ -59,10 +58,9 @@ app.get('/api/dashboard', (req, res) => {
 
 app.post('/api/logout', (req, res) => {
     res.clearCookie('token', {
-        domain: '.netlify.app',
         secure: true,
         httpOnly: true,
-        sameSite: 'Lax'
+        sameSite: 'None'
     });
     res.status(200).json({ success: true, message: 'Вы успешно вышли из системы.' });
 });
