@@ -1,244 +1,233 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в личный кабинет</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Circe+Rounded:wght@400;700&display=swap');
-        body {
-            font-family: 'Circe Rounded', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .login-box {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
-        h2 {
-            margin-bottom: 30px;
-            color: #333;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 700;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 0;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-        .password-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .password-container input {
-            flex-grow: 1;
-            padding-right: 80px;
-        }
-        .password-toggle {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #999;
-        }
-        .login-button {
-            width: 100%;
-            padding: 15px;
-            background-color: #fb4d35;
-            color: #fff;
-            border: none;
-            border-radius: 0;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        .login-button:hover {
-            background-color: #e5462e;
-        }
-        #message {
-            margin-top: 20px;
-            font-weight: 700;
-            line-height: 1.5;
-            color: red;
-        }
-        .form-links {
-            margin-top: 20px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .form-links a {
-            color: #fb4d35;
-            text-decoration: none;
-            font-weight: 400;
-        }
-        .form-links a:hover {
-            text-decoration: underline;
-        }
-        .success-message-links a {
-            color: #fb4d35 !important;
-            font-weight: 400 !important;
-            text-decoration: none !important;
-        }
-        .success-message-links a:hover {
-            text-decoration: underline !important;
-        }
-        .dashboard-content {
-            display: none; /* Скрываем по умолчанию */
-            text-align: left;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в личный кабинет</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Circe+Rounded:wght@400;700&display=swap');
+        body {
+            font-family: 'Circe Rounded', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-box {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 700;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 0;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-container input {
+            flex-grow: 1;
+            padding-right: 80px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #999;
+        }
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #fb4d35;
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .login-button:hover {
+            background-color: #e5462e;
+        }
+        #message {
+            margin-top: 20px;
+            font-weight: 700;
+            line-height: 1.5;
+            color: red;
+        }
+        .form-links {
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .form-links a {
+            color: #fb4d35;
+            text-decoration: none;
+            font-weight: 400;
+        }
+        .form-links a:hover {
+            text-decoration: underline;
+        }
+        .success-message-links a {
+            color: #fb4d35 !important;
+            font-weight: 400 !important;
+            text-decoration: none !important;
+        }
+        .success-message-links a:hover {
+            text-decoration: underline !important;
+        }
+        .dashboard-content {
+            display: none; /* Скрываем по умолчанию */
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-box">
-        <div id="login-form-container">
-            <h2 id="form-title">Вход в личный кабинет</h2>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Пароль</label>
-                    <div class="password-container">
-                        <input type="password" id="password" required>
-                        <button type="button" class="password-toggle" id="password-toggle-btn" onclick="togglePassword()">Показать</button>
-                    </div>
-                </div>
-                <button type="submit" class="login-button">Войти</button>
-            </form>
-            <p id="message"></p>
-            <div class="form-links">
-                <p id="registration-link-container"><a href="https://pro-culinaria.ru/registration#">Зарегистрироваться</a></p>
-                <p id="reset-link-container"><a href="#" onclick="showForm('reset')">Восстановить пароль</a></p>
-                <p id="login-link-container" style="display: none;"><a href="#" onclick="showForm('login')">Вернуться к входу</a></p>
-            </div>
-        </div>
+    <div class="login-box">
+        <div id="login-form-container">
+            <h2 id="form-title">Вход в личный кабинет</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Пароль</label>
+                    <div class="password-container">
+                        <input type="password" id="password" required>
+                        <button type="button" class="password-toggle" id="password-toggle-btn" onclick="togglePassword()">Показать</button>
+                    </div>
+                </div>
+                <button type="submit" class="login-button">Войти</button>
+            </form>
+            <p id="message"></p>
+            <div class="form-links">
+                <p id="registration-link-container"><a href="https://pro-culinaria.ru/registration#">Зарегистрироваться</a></p>
+                <p id="reset-link-container"><a href="#" onclick="showForm('reset')">Восстановить пароль</a></p>
+                <p id="login-link-container" style="display: none;"><a href="#" onclick="showForm('login')">Вернуться к входу</a></p>
+            </div>
+        </div>
 
-        <div id="dashboard-container" class="dashboard-content">
-            <h2 id="welcome-message"></h2>
-            <p>Вы успешно авторизованы! Здесь будут ваши личные данные.</p>
-            <button class="login-button" id="logout-button">Выйти</button>
-        </div>
-    </div>
-    
-    <script>
-        // URL вашего сервера. Используем localhost для тестирования.
-        const API_URL = 'http://localhost:3000';
+        <div id="dashboard-container" class="dashboard-content">
+            <h2 id="welcome-message"></h2>
+            <p>Вы успешно авторизованы! Здесь будут ваши личные данные.</p>
+            <button class="login-button" id="logout-button">Выйти</button>
+        </div>
+    </div>
+    
+    <script>
+        // URL вашего сервера. Исправлено для работы на Netlify.
+        const API_URL = '';
 
-        function togglePassword() {
-            const passwordField = document.getElementById('password');
-            const passwordToggleButton = document.getElementById('password-toggle-btn');
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            passwordToggleButton.textContent = (type === 'password') ? 'Показать' : 'Скрыть';
-        }
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const passwordToggleButton = document.getElementById('password-toggle-btn');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            passwordToggleButton.textContent = (type === 'password') ? 'Показать' : 'Скрыть';
+        }
 
-        // Этот код мы уберем, т.к. он не нужен для нашей логики с куки и JWT
-        // function showForm(formType) { /* ... ваш оригинальный код ... */ }
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const messageElement = document.getElementById('message');
+            const loginContainer = document.getElementById('login-form-container');
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const logoutButton = document.getElementById('logout-button');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('loginForm');
-            const messageElement = document.getElementById('message');
-            const loginContainer = document.getElementById('login-form-container');
-            const dashboardContainer = document.getElementById('dashboard-container');
-            const welcomeMessage = document.getElementById('welcome-message');
-            const logoutButton = document.getElementById('logout-button');
+            const checkAuth = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/dashboard`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        welcomeMessage.textContent = data.message;
+                        loginContainer.style.display = 'none';
+                        dashboardContainer.style.display = 'block';
+                    } else {
+                        loginContainer.style.display = 'block';
+                        dashboardContainer.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Ошибка проверки авторизации:', error);
+                    loginContainer.style.display = 'block';
+                    dashboardContainer.style.display = 'none';
+                }
+            };
 
-            // Функция для проверки авторизации при загрузке страницы
-            const checkAuth = async () => {
-                try {
-                    // Браузер автоматически отправит куки, если они есть
-                    const response = await fetch(`${API_URL}/api/dashboard`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        welcomeMessage.textContent = data.message;
-                        loginContainer.style.display = 'none';
-                        dashboardContainer.style.display = 'block';
-                    } else {
-                        // Если токена нет или он недействителен, показываем форму входа
-                        loginContainer.style.display = 'block';
-                        dashboardContainer.style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error('Ошибка проверки авторизации:', error);
-                    loginContainer.style.display = 'block';
-                    dashboardContainer.style.display = 'none';
-                }
-            };
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
 
-            // Обработчик входа
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+                try {
+                    const response = await fetch(`${API_URL}/api/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        // Исправлено: теперь отправляем 'email' вместо 'username'
+                        body: JSON.stringify({ email, password })
+                    });
 
-                try {
-                    const response = await fetch(`${API_URL}/api/login`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ username: email, password })
-                    });
+                    const data = await response.json();
 
-                    const data = await response.json();
+                    if (response.ok) {
+                        messageElement.textContent = 'Успешный вход!';
+                        messageElement.style.color = 'green';
+                        window.location.reload();
+                    } else {
+                        messageElement.textContent = data.message || 'Неверный email или пароль';
+                        messageElement.style.color = 'red';
+                    }
+                } catch (error) {
+                    console.error('Ошибка при авторизации:', error);
+                    messageElement.textContent = 'Произошла ошибка при попытке входа.';
+                    messageElement.style.color = 'red';
+                }
+            });
 
-                    if (response.ok) {
-                        messageElement.textContent = 'Успешный вход!';
-                        messageElement.style.color = 'green';
-                        // Перезагружаем страницу, чтобы сработала проверка авторизации
-                        window.location.reload(); 
-                    } else {
-                        messageElement.textContent = data.message || 'Неверный email или пароль';
-                        messageElement.style.color = 'red';
-                    }
-                } catch (error) {
-                    console.error('Ошибка при авторизации:', error);
-                    messageElement.textContent = 'Произошла ошибка при попытке входа.';
-                    messageElement.style.color = 'red';
-                }
-            });
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    await fetch(`${API_URL}/api/logout`);
+                    window.location.reload();
+                } catch (error) {
+                    console.error('Ошибка при выходе:', error);
+                }
+            });
 
-            // Обработчик выхода
-            logoutButton.addEventListener('click', async () => {
-                try {
-                    // Отправляем запрос на сервер для очистки куки
-                    await fetch(`${API_URL}/api/logout`);
-                    // Перезагружаем страницу, чтобы показать форму входа
-                    window.location.reload(); 
-                } catch (error) {
-                    console.error('Ошибка при выходе:', error);
-                }
-            });
-
-            // Вызываем проверку авторизации при загрузке страницы
-            checkAuth();
-        });
-    </script>
+            checkAuth();
+        });
+    </script>
 </body>
 </html>
