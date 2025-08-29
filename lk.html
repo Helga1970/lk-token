@@ -156,18 +156,24 @@
         });
         
         const checkAndRedirect = async () => {
-            const user = JSON.parse(localStorage.getItem('user'));
-            
-            if (!user || !user.email) {
-                alert('Ошибка: Данные пользователя не найдены. Пожалуйста, попробуйте войти снова.');
-                window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
-                return;
-            }
+    // В этом коде мы не используем localStorage, т.к. проверка будет на сервере
+    // через токен, который браузер автоматически отправляет в куках
+    try {
+        // Мы отправляем запрос без заголовка, т.к. куки с токеном отправятся сами
+        const response = await fetch('/.netlify/functions/get-content'); 
 
-            try {
-                const response = await fetch('/.netlify/functions/get-content?action=check-access', {
-                    headers: { 'X-User-Email': user.email }
-                });
+        if (response.ok) {
+            window.location.href = 'https://pro-culinaria-library.proculinaria-book.ru/?access=true';
+        } else {
+            const errorMessage = await response.text();
+            alert(`Ошибка: ${errorMessage}`);
+        }
+
+    } catch (e) {
+        console.error('Ошибка:', e);
+        alert('Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.');
+    }
+};
 
                 if (response.ok) {
                     window.location.href = 'https://pro-culinaria-library.proculinaria-book.ru/?access=true';
