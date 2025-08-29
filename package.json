@@ -1,17 +1,20 @@
 {
-  "name": "netlify-auth-app",
+  "name": "pro-culinaria-lk",
   "version": "1.0.0",
-  "description": "A simple authentication app for Netlify Functions",
-  "main": "netlify/functions/auth.js",
+  "description": "Личный кабинет для сайта pro-culinaria",
+  "main": "netlify/functions/prodamus-webhook.js",
   "scripts": {
     "start": "netlify dev"
   },
-  "author": "",
+  "author": "pro-culinaria",
   "license": "ISC",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
+    "axios": "^1.11.0",
+    "cookie-parser": "^1.4.7",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.14",
+    "pg": "^8.12.0",
     "serverless-http": "^3.2.0"
   }
 }
