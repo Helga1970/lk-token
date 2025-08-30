@@ -33,13 +33,14 @@ exports.handler = async (event) => {
         ?.split('=')[1];
         
     // Если токена нет, значит, пользователь не авторизован
-    if (!hasAccess) {
-    const errorBody = 'Доступ запрещён. Для доступа требуется действующая подписка. Для оплаты подписки перейдите по ссылке: https://pro-culinaria.ru/aboutplatej';
-    return {
-        statusCode: 403,
-        body: errorBody
-    };
-}
+    if (!token) {
+        return {
+            statusCode: 302,
+            headers: {
+                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
+            },
+        };
+    }
 
     try {
         // 2. Проверяем токен на действительность
