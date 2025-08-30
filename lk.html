@@ -123,7 +123,7 @@
         <div class="links-section">
             <a href="https://for-dating.proculinaria-book.ru/" class="lk-link">Ознакомительный раздел</a>
 
-            <a href="https://pro-culinaria-lk.proculinaria-book.ru/.netlify/functions/get-content" class="lk-link">
+            <a href="/.netlify/functions/get-content" class="lk-link">
                 <span>Читальный зал Библиотеки</span>
                 <span class="lk-subtext">для доступа требуется действующая подписка</span>
             </a>
@@ -155,27 +155,6 @@
             window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
         });
         
-        const checkAndRedirect = async () => {
-    // В этом коде мы не используем localStorage, т.к. проверка будет на сервере
-    // через токен, который браузер автоматически отправляет в куках
-    try {
-        // Мы отправляем запрос без заголовка, т.к. куки с токеном отправятся сами
-        const response = await fetch('/.netlify/functions/get-content'); 
-
-
-                if (response.ok) {
-                    window.location.href = '/content.html';
-                } else {
-                    const errorMessage = await response.text();
-                    alert(`Ошибка: ${errorMessage}`);
-                }
-
-            } catch (e) {
-                console.error('Ошибка:', e);
-                alert('Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.');
-            }
-        };
-
         function equalizeTiles() {
             const tiles = Array.from(document.querySelectorAll('.links-section .lk-link'));
             if (!tiles.length) return;
