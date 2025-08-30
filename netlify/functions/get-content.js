@@ -61,9 +61,11 @@ const token = event.queryStringParameters.token || event.headers.cookie
         
         // 4. Если доступ есть, возвращаем успешный статус
         return {
-            statusCode: 200,
-            body: 'Доступ разрешен.'
-        };
+    statusCode: 302,
+    headers: {
+        'Location': 'https://pro-culinaria-library.proculinaria-book.ru',
+    },
+};
 
     } catch (e) {
         console.error('Ошибка при проверке токена или доступе:', e);
