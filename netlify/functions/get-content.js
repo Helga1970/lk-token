@@ -2,7 +2,6 @@ const { Client } = require('pg');
 const jwt = require('jsonwebtoken');
 
 // --- Функция проверки подписки ---
-// Эта функция остаётся без изменений, так как это ключевая часть вашей логики.
 const checkSubscription = async (email) => {
     const client = new Client({
         connectionString: process.env.NEON_DB_URL,
@@ -26,23 +25,23 @@ const checkSubscription = async (email) => {
 };
 
 // --- Главная функция-обработчик ---
-// Теперь она будет использовать JWT-токен для проверки доступа.
 exports.handler = async (event) => {
     // 1. Получаем JWT-токен из URL, если его там нет - из куки
-const token = event.queryStringParameters.token || event.headers.cookie
-    ?.split('; ')
-    .find(row => row.startsWith('token='))
-    ?.split('=')[1];
+    const token = event.queryStringParameters.token || event.headers.cookie
+        ?.split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
         
     // Если токена нет, значит, пользователь не авторизован
     if (!token) {
-    return {
-        statusCode: 302,
-        headers: {
-            'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
-        },
-    };
-}
+        return {
+            statusCode: 302,
+            headers: {
+                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
+            },
+        };
+    }
+
     try {
         // 2. Проверяем токен на действительность
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -61,18 +60,19 @@ const token = event.queryStringParameters.token || event.headers.cookie
         
         // 4. Если доступ есть, возвращаем успешный статус
         return {
-    statusCode: 302,
-    headers: {
-        'Location': 'https://pro-culinaria-library.proculinaria-book.ru',
-    },
-};
+            statusCode: 302,
+            headers: {
+                'Location': 'https://pro-culinaria-library.proculinaria-book.ru',
+            },
+        };
 
-        } catch (e) {
-    console.error('Ошибка при проверке токена или подписки:', e);
-    return {
-        statusCode: 302,
-        headers: {
-            'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
-        },
-    };
-}
+    } catch (e) {
+        console.error('Ошибка при проверке токена или подписки:', e);
+        return {
+            statusCode: 302,
+            headers: {
+                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
+            },
+        };
+    }
+};
