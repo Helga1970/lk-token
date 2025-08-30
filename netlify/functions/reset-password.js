@@ -52,8 +52,9 @@ exports.handler = async (event) => {
 
         const userQuery = 'SELECT * FROM users WHERE email = $1';
         const userResult = await client.query(userQuery, [email]);
+        const user = userResult.rows[0]; // <-- Добавлена эта строка
 
-        if (userResult.rows.length === 0) {
+        if (!user) { // <-- Условие проверки изменено
             return {
                 statusCode: 404,
                 headers: headers,
@@ -81,7 +82,7 @@ exports.handler = async (event) => {
             to: email,
             subject: 'Восстановление пароля',
             html: `
-                <p>Здравствуйте!</p>
+                <p>Здравствуйте, **${user.name}**!</p>
                 <p>Ваш логин: ${email}</p>
                 <p>Ваш новый пароль для входа в Личный кабинет: ${newPassword}</p>
                 <p>Вы можете использовать этот пароль, чтобы войти в свой личный кабинет по этой ссылке: <a href="https://pro-culinaria-lk.proculinaria-book.ru">Войти</a></p>
