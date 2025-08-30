@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Доступ запрещен</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: sans-serif;
+            text-align: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #fb4d35;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            /* Убрано: border-radius: 4px; */
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #e5462e;
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+            }
+            .btn {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Доступ разрешен только для авторизованных пользователей с действующей подпиской.</h1>
+        <div class="buttons-container">
+            <a href="https://pro-culinaria.ru/registration" class="btn">Зарегистрироваться</a>
+            <a href="https://pro-culinaria-lk.proculinaria-book.ru/" class="btn">Войти в Личный кабинет</a>
+        </div>
+    </div>
+</body>
+</html>
