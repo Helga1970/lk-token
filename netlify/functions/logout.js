@@ -1,12 +1,8 @@
-exports.handler = async () => {
-    const expiredCookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-
-    return {
-        statusCode: 200,
-        headers: {
-            'Set-Cookie': expiredCookie,
-            'Location': '/index.html'
-        },
-        body: 'Выход выполнен успешно.'
-    };
+return {
+    statusCode: 302, // Изменил статус на 302 для корректного перенаправления
+    headers: {
+        'Set-Cookie': expiredCookie,
+        'Location': '/index.html'
+    },
+    body: 'Выход выполнен успешно.'
 };
