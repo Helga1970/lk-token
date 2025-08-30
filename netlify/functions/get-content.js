@@ -47,8 +47,10 @@ exports.handler = async (event) => {
     
     if (!token) {
         return {
-            statusCode: 403,
-            body: 'Доступ запрещен. Нет токена.'
+            statusCode: 302,
+            headers: {
+                'Location': '/unauthorized.html',
+            },
         };
     }
 
@@ -59,8 +61,10 @@ exports.handler = async (event) => {
 
         if (!hasAccess) {
             return {
-                statusCode: 403,
-                body: 'Доступ запрещен. Подписка неактивна.'
+                statusCode: 302,
+                headers: {
+                    'Location': '/unauthorized.html',
+                },
             };
         }
         
@@ -76,8 +80,10 @@ exports.handler = async (event) => {
     } catch (e) {
         console.error('Неверный или просроченный токен:', e);
         return {
-            statusCode: 403,
-            body: 'Доступ запрещен. Неверный токен.'
+            statusCode: 302,
+            headers: {
+                'Location': '/unauthorized.html',
+            },
         };
     }
 };
