@@ -68,16 +68,12 @@ const token = event.queryStringParameters.token || event.headers.cookie
 };
 
     } catch (e) {
-        console.error('Ошибка при проверке токена или доступе:', e);
-        if (e.name === 'TokenExpiredError' || e.name === 'JsonWebTokenError') {
-            return {
-                statusCode: 401,
-                body: 'Неверный или просроченный токен. Пожалуйста, войдите снова.'
-            };
-        }
-        return {
-            statusCode: 500,
-            body: 'Внутренняя ошибка сервера. Пожалуйста, попробуйте позже.'
-        };
-    }
-};
+        } catch (e) {
+    console.error('Ошибка при проверке токена или подписки:', e);
+    return {
+        statusCode: 302,
+        headers: {
+            'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
+        },
+    };
+}
