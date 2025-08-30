@@ -36,12 +36,13 @@ const token = event.queryStringParameters.token || event.headers.cookie
         
     // Если токена нет, значит, пользователь не авторизован
     if (!token) {
-        return {
-            statusCode: 401,
-            body: 'Не авторизован. Пожалуйста, войдите в свой личный кабинет.'
-        };
-    }
-
+    return {
+        statusCode: 302,
+        headers: {
+            'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
+        },
+    };
+}
     try {
         // 2. Проверяем токен на действительность
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
