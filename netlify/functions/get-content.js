@@ -28,11 +28,11 @@ const checkSubscription = async (email) => {
 // --- Главная функция-обработчик ---
 // Теперь она будет использовать JWT-токен для проверки доступа.
 exports.handler = async (event) => {
-    // 1. Получаем JWT-токен из куки
-    const token = event.headers.cookie
-        ?.split('; ')
-        .find(row => row.startsWith('token='))
-        ?.split('=')[1];
+    // 1. Получаем JWT-токен из URL, если его там нет - из куки
+const token = event.queryStringParameters.token || event.headers.cookie
+    ?.split('; ')
+    .find(row => row.startsWith('token='))
+    ?.split('=')[1];
         
     // Если токена нет, значит, пользователь не авторизован
     if (!token) {
