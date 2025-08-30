@@ -162,18 +162,6 @@
         // Мы отправляем запрос без заголовка, т.к. куки с токеном отправятся сами
         const response = await fetch('/.netlify/functions/get-content'); 
 
-        if (response.ok) {
-            window.location.href = 'https://pro-culinaria-library.proculinaria-book.ru/?access=true';
-        } else {
-            const errorMessage = await response.text();
-            alert(`Ошибка: ${errorMessage}`);
-        }
-
-    } catch (e) {
-        console.error('Ошибка:', e);
-        alert('Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.');
-    }
-};
 
                 if (response.ok) {
                     window.location.href = 'https://pro-culinaria-library.proculinaria-book.ru/?access=true';
