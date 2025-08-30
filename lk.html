@@ -123,7 +123,7 @@
         <div class="links-section">
             <a href="https://for-dating.proculinaria-book.ru/" class="lk-link">Ознакомительный раздел</a>
 
-            <a href="#" class="lk-link" onclick="checkAndRedirect(); return false;">
+            <a href="https://pro-culinaria-lk.proculinaria-book.ru/.netlify/functions/get-content" class="lk-link">
                 <span>Читальный зал Библиотеки</span>
                 <span class="lk-subtext">для доступа требуется действующая подписка</span>
             </a>
@@ -160,11 +160,11 @@
     // через токен, который браузер автоматически отправляет в куках
     try {
         // Мы отправляем запрос без заголовка, т.к. куки с токеном отправятся сами
-        const response = await fetch('/.netlify/functions/get-content');  
+        const response = await fetch('/.netlify/functions/get-content'); 
 
 
                 if (response.ok) {
-                    window.location.href = '/content.html';
+                    window.location.href = 'https://pro-culinaria-library.proculinaria-book.ru/?access=true';
                 } else {
                     const errorMessage = await response.text();
                     alert(`Ошибка: ${errorMessage}`);
