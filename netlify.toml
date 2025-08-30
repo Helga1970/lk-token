@@ -6,3 +6,8 @@
   from = "/api/*"
   to = "/.netlify/functions/auth/:splat"
   status = 200
+
+[[redirects]]
+  from = "/content.html"
+  to = "/.netlify/functions/check-access-content"
+  status = 200
