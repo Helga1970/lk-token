@@ -73,6 +73,9 @@ exports.handler = async (event) => {
             statusCode: 200,
             headers: {
                 'Content-Type': 'text/html',
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             },
             body: protectedContent,
         };
