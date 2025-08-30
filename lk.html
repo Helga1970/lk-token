@@ -153,6 +153,7 @@
         document.getElementById('logoutButton').addEventListener('click', async function() {
             localStorage.removeItem('user');
             await fetch('/.netlify/functions/logout', { method: 'POST' });
+            window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
         });
         
         function equalizeTiles() {
