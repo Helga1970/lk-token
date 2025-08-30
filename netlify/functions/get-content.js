@@ -67,7 +67,6 @@ const token = event.queryStringParameters.token || event.headers.cookie
     },
 };
 
-    } catch (e) {
         } catch (e) {
     console.error('Ошибка при проверке токена или подписки:', e);
     return {
