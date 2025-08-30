@@ -25,7 +25,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 302,
       headers: {
-        'Location': 'https://pro-culinaria.ru/chitalnyizal',
+        'Location': 'https://pro-culinaria-library.proculinaria-book.ru',
       },
     };
   } catch (e) {
