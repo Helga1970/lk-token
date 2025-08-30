@@ -1,3 +1,30 @@
+const { Client } = require('pg');
+const jwt = require('jsonwebtoken');
+
+// --- Функция проверки подписки ---
+const checkSubscription = async (email) => {
+    const client = new Client({
+        connectionString: process.env.NEON_DB_URL,
+    });
+    try {
+        await client.connect();
+        const query = 'SELECT access_end_date FROM users WHERE email = $1';
+        const result = await client.query(query, [email]);
+        if (result.rows.length === 0) return false;
+
+        const endDateMs = new Date(result.rows[0].access_end_date).getTime();
+        const nowMs = new Date().getTime();
+
+        return endDateMs >= nowMs;
+    } catch (error) {
+        console.error('Ошибка при проверке подписки:', error);
+        return false;
+    } finally {
+        await client.end();
+    }
+};
+
+// --- Главная функция-обработчик ---
 exports.handler = async (event) => {
     // 1. Получаем JWT-токен из URL, если его там нет - из куки
     const token = event.queryStringParameters.token || event.headers.cookie
@@ -10,7 +37,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 302,
             headers: {
-                'Location': '/', // Было: 'https://pro-culinaria-lk.proculinaria-book.ru'
+                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
             },
         };
     }
@@ -24,18 +51,18 @@ exports.handler = async (event) => {
         const hasAccess = await checkSubscription(userEmail);
 
         if (!hasAccess) {
-            const errorBody = 'Доступ запрещён. Для доступа требуется действующая подписка. Для оплаты подписки перейдите по ссылке: https://pro-culinaria.ru/aboutplatej';
-            return {
-                statusCode: 403,
-                body: errorBody
-            };
-        }
+    const errorBody = 'Доступ запрещён. Для доступа требуется действующая подписка. Для оплаты подписки перейдите по ссылке: https://pro-culinaria.ru/aboutplatej';
+    return {
+        statusCode: 403,
+        body: errorBody
+    };
+}
         
         // 4. Если доступ есть, возвращаем успешный статус
         return {
             statusCode: 302,
             headers: {
-                'Location': '/content.html', // Было: 'https://pro-culinaria-library.proculinaria-book.ru'
+                'Location': '/content.html',
             },
         };
 
@@ -44,7 +71,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 302,
             headers: {
-                'Location': '/', // Было: 'https://pro-culinaria-lk.proculinaria-book.ru'
+                'Location': '/content.html',
             },
         };
     }
