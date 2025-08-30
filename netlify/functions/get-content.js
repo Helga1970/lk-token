@@ -24,55 +24,60 @@ const checkSubscription = async (email) => {
     }
 };
 
+// --- HTML-код вашей страницы ---
+const protectedContent = `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="margin:0; padding:0;">
+    <iframe src="https://pro-culinaria.ru/chitalnyizal" style="width:100%; height:100vh; border:none;"></iframe>
+</body>
+</html>
+`;
+
 // --- Главная функция-обработчик ---
 exports.handler = async (event) => {
-    // 1. Получаем JWT-токен из URL, если его там нет - из куки
-    const token = event.queryStringParameters.token || event.headers.cookie
+    // Получаем токен из куки.
+    const token = event.headers.cookie
         ?.split('; ')
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
-        
-    // Если токена нет, значит, пользователь не авторизован
+    
     if (!token) {
         return {
-            statusCode: 302,
-            headers: {
-                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru',
-            },
+            statusCode: 403,
+            body: 'Доступ запрещен. Нет токена.'
         };
     }
 
     try {
-        // 2. Проверяем токен на действительность
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userEmail = decoded.email;
-
-        // 3. Проверяем подписку по email, взятому из токена
         const hasAccess = await checkSubscription(userEmail);
 
         if (!hasAccess) {
-    const errorBody = 'Доступ запрещён. Для доступа требуется действующая подписка. Для оплаты подписки перейдите по ссылке: https://pro-culinaria.ru/aboutplatej';
-    return {
-        statusCode: 403,
-        body: errorBody
-    };
-}
+            return {
+                statusCode: 403,
+                body: 'Доступ запрещен. Подписка неактивна.'
+            };
+        }
         
-        // 4. Если доступ есть, возвращаем успешный статус
+        // Если проверка прошла, возвращаем HTML-страницу
         return {
-            statusCode: 302,
+            statusCode: 200,
             headers: {
-                'Location': '/content.html',
+                'Content-Type': 'text/html',
             },
+            body: protectedContent,
         };
 
     } catch (e) {
-        console.error('Ошибка при проверке токена или подписки:', e);
+        console.error('Неверный или просроченный токен:', e);
         return {
-            statusCode: 302,
-            headers: {
-                'Location': '/content.html',
-            },
+            statusCode: 403,
+            body: 'Доступ запрещен. Неверный токен.'
         };
     }
 };
