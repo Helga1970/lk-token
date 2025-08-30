@@ -1,12 +1,11 @@
 exports.handler = async () => {
-    // 1. Создаем переменную expiredCookie.
-    const expiredCookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    const expiredCookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Domain=.proculinaria-book.ru; Secure; SameSite=Lax';
 
     return {
-        statusCode: 302, // Код для перенаправления
+        statusCode: 302,
         headers: {
-            'Set-Cookie': expiredCookie, // 2. Используем переменную здесь
-            'Location': 'https://pro-culinaria-lk.proculinaria-book.ru' // или '/index.html'
+            'Set-Cookie': expiredCookie,
+            'Location': 'https://pro-culinaria-lk.proculinaria-book.ru'
         },
         body: 'Выход выполнен успешно.'
     };
