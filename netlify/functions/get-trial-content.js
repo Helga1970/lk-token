@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// --- HTML-код вашей страницы с iFrame ---
 const trialContent = `
 <!DOCTYPE html>
 <html lang="ru">
@@ -20,18 +19,19 @@ exports.handler = async (event) => {
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
     
+    // 1. Проверяем наличие токена
     if (!token) {
         return {
             statusCode: 302,
-            headers: {
-                'Location': '/trial-unauthorized.html',
-            },
+            headers: { 'Location': '/trial-unauthorized.html' },
         };
     }
 
+    // 2. Если токен есть, проверяем его валидность
     try {
         jwt.verify(token, process.env.JWT_SECRET);
         
+        // Если токен валиден, возвращаем контент
         return {
             statusCode: 200,
             headers: {
@@ -42,22 +42,11 @@ exports.handler = async (event) => {
             },
             body: trialContent,
         };
-
     } catch (e) {
-        if (e.name === 'TokenExpiredError') {
-            return {
-                statusCode: 302,
-                headers: {
-                    'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
-                },
-            };
-        } else {
-            return {
-                statusCode: 302,
-                headers: {
-                    'Location': '/trial-unauthorized.html',
-                },
-            };
-        }
+        // 3. Если токен не валиден, перенаправляем на страницу отказа
+        return {
+            statusCode: 302,
+            headers: { 'Location': '/trial-unauthorized.html' },
+        };
     }
 };
