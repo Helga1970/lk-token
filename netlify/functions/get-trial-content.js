@@ -2,23 +2,23 @@ const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-    // Получаем токен из куки.
-    const token = event.headers.cookie
-        ?.split('; ')
+    const cookieHeader = event.headers.cookie || '';
+    const token = cookieHeader
+        .split('; ')
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
     
+    // Если токена нет, перенаправляем на страницу отказа в доступе для ознакомительного контента
     if (!token) {
         return {
             statusCode: 302,
             headers: {
-                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
+                'Location': '/trial-unauthorized.html',
             },
         };
     }
 
     try {
-        // Проверяем только валидность токена
         jwt.verify(token, process.env.JWT_SECRET);
         
         // Запрашиваем содержимое HTML-файла с основного сайта
@@ -43,12 +43,24 @@ exports.handler = async (event) => {
         };
 
     } catch (e) {
-        console.error('Неверный или просроченный токен:', e);
-        return {
-            statusCode: 302,
-            headers: {
-                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
-            },
-        };
+        console.error('Ошибка верификации токена:', e.name, 'Сообщение:', e.message);
+        
+        // Если токен просрочен, возвращаем на страницу входа для повторной авторизации
+        if (e.name === 'TokenExpiredError') {
+            return {
+                statusCode: 302,
+                headers: {
+                    'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
+                },
+            };
+        } else {
+            // В любом другом случае (неверный токен), перенаправляем на страницу отказа в доступе для ознакомительного контента
+            return {
+                statusCode: 302,
+                headers: {
+                    'Location': '/trial-unauthorized.html',
+                },
+            };
+        }
     }
 };
