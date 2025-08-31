@@ -20,21 +20,25 @@ document.addEventListener('DOMContentLoaded', () => {
             userNameElement.textContent = data.name || 'Имя не указано';
             userEmailElement.textContent = data.email || 'Email не указан'; 
             
-            // Отображаем статус подписки
-            let subStatus;
-            if (data.subscription_type === '30_days') {
-                subStatus = '30 дней';
-            } else if (data.subscription_type === '365_days') {
-                subStatus = '365 дней';
+            // Отображаем статус подписки и срок действия
+            const now = new Date();
+            const endDate = data.access_end_date ? new Date(data.access_end_date) : null;
+
+            if (endDate && endDate.getTime() >= now.getTime()) {
+                // Подписка активна
+                userSubscriptionElement.textContent = 'Действующая';
+                const formattedDate = endDate.toLocaleString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                subscriptionEndDateElement.textContent = formattedDate;
             } else {
-                subStatus = 'Подписка не активна';
-            }
-            userSubscriptionElement.textContent = subStatus;
-            
-            if (data.access_end_date) {
-                subscriptionEndDateElement.textContent = new Date(data.access_end_date).toLocaleDateString('ru-RU');
-            } else {
-                subscriptionEndDateElement.textContent = 'Дата не найдена';
+                // Подписки нет или она неактивна
+                userSubscriptionElement.textContent = 'Подписка не активна';
+                subscriptionEndDateElement.textContent = ''; // Пустое поле, как вы и просили
             }
             
         } catch (error) {
