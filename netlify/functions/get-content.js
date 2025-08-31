@@ -39,12 +39,15 @@ const protectedContent = `
 
 // --- Главная функция-обработчик ---
 exports.handler = async (event) => {
-    // Получаем токен из куки.
-    const token = event.headers.cookie
-        ?.split('; ')
+    const cookieHeader = event.headers.cookie || '';
+    const token = cookieHeader
+        .split('; ')
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
     
+    // --- СТРОКА ДЛЯ ДИАГНОСТИКИ ---
+    console.log('Полученный токен:', token);
+
     if (!token) {
         return {
             statusCode: 302,
@@ -56,6 +59,9 @@ exports.handler = async (event) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // --- СТРОКА ДЛЯ ДИАГНОСТИКИ ---
+        console.log('Токен успешно верифицирован. Срок действия:', new Date(decoded.exp * 1000).toLocaleString());
+
         const userEmail = decoded.email;
         const hasAccess = await checkSubscription(userEmail);
 
@@ -68,19 +74,22 @@ exports.handler = async (event) => {
             };
         }
         
-        // Если проверка прошла, возвращаем HTML-страницу
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'text/html',
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             },
             body: protectedContent,
         };
 
     } catch (e) {
-        // Если ошибка связана с просроченным токеном, перенаправляем на вход
+        // --- СТРОКА ДЛЯ ДИАГНОСТИКИ ---
+        console.error('Ошибка верификации токена:', e.name, 'Сообщение:', e.message);
+        
         if (e.name === 'TokenExpiredError') {
-            console.error('Просроченный токен. Перенаправляем на страницу входа.');
             return {
                 statusCode: 302,
                 headers: {
@@ -88,8 +97,6 @@ exports.handler = async (event) => {
                 },
             };
         } else {
-            // В случае любой другой ошибки (неверная подпись, неверный формат), перенаправляем на 'unauthorized.html'
-            console.error('Неверный токен или другая ошибка:', e);
             return {
                 statusCode: 302,
                 headers: {
