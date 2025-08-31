@@ -47,6 +47,7 @@
             flex-direction: column;
             gap: 16px;
             margin-top: 30px;
+            position: relative; /* Добавлен для позиционирования окна */
         }
 
         .lk-link {
@@ -115,17 +116,17 @@
             opacity: 0.8;
         }
 
-        /* СТИЛИ ДЛЯ ВСПЛЫВАЮЩЕГО ОКНА */
+        /* ИЗМЕНЕННЫЕ СТИЛИ ДЛЯ ВСПЛЫВАЮЩЕГО ОКНА */
         .popup-overlay {
-            position: fixed;
-            top: 0;
+            position: absolute; /* Позиционируем относительно .links-section */
+            top: 100%;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
 
@@ -205,17 +206,16 @@
                 <span>Читальный зал Библиотеки</span>
                 <span class="lk-subtext">для доступа требуется действующая подписка</span>
             </a>
-        </div>
+            
+            <div id="popup" class="popup-overlay" style="display: none;">
+              <p id="popup-message"></p>
+              <span class="close-btn">&times;</span>
+            </div>
+            </div>
         
         <button class="logout-button" id="logoutButton">Выйти из кабинета</button>
     </div>
 
-    <div id="popup" class="popup-overlay" style="display: none;">
-      <div class="popup-content">
-        <span class="close-btn">&times;</span>
-        <p id="popup-message"></p>
-      </div>
-    </div>
     <script>
         window.onload = function() {
             try {
@@ -281,14 +281,9 @@
             }
         });
 
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            document.getElementById('popup').style.display = 'none';
-        });
-
-        window.addEventListener('click', (event) => {
-            const popup = document.getElementById('popup');
-            if (event.target == popup) {
-                popup.style.display = 'none';
+        document.querySelector('.links-section').addEventListener('click', (event) => {
+            if (event.target.closest('.close-btn')) {
+                document.getElementById('popup').style.display = 'none';
             }
         });
         
