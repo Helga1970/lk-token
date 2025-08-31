@@ -173,7 +173,7 @@
                 const user = JSON.parse(userData);
                 const welcomeMessage = document.getElementById('welcomeMessage');
                 if (user && user.name) {
-                    welcomeMessage.textContent = `Добро пожаловать, ${user.name}!`;
+                    welcomeMessage.textContent = `${user.name}, добро пожаловать в личный кабинет!`;
                 }
             } catch (e) {
                 console.error('Ошибка при чтении данных пользователя из localStorage:', e);
