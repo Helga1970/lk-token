@@ -1,94 +1,81 @@
-const { Client } = require('pg');
-const jwt = require('jsonwebtoken');
-
-exports.handler = async (event) => {
-    // 1. Проверяем метод запроса
-    if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
+document.addEventListener('DOMContentLoaded', () => {
+    const profileForm = document.getElementById('profileForm');
+    const statusMessage = document.getElementById('statusMessage');
+    const userNameElement = document.getElementById('userName');
+    const userEmailElement = document.getElementById('userEmail');
+    const userSubscriptionElement = document.getElementById('userSubscription');
+    const subscriptionEndDateElement = document.getElementById('subscriptionEndDate');
+    
+    // Функция для загрузки и отображения данных пользователя
+    async function fetchUserData() {
+        try {
+            const response = await fetch('/.netlify/functions/get-profile-data'); // Новый маршрут
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Ошибка загрузки данных профиля.');
+            }
+            const data = await response.json();
+            
+            // Заполняем элементы данными
+            userNameElement.textContent = data.name;
+            userEmailElement.textContent = data.email; // Предполагаем, что email тоже есть в ответе
+            userSubscriptionElement.textContent = data.subscription_status;
+            subscriptionEndDateElement.textContent = new Date(data.subscription_end_date).toLocaleDateString('ru-RU');
+            
+        } catch (error) {
+            console.error('Ошибка:', error);
+            statusMessage.style.display = 'block';
+            statusMessage.classList.add('error');
+            statusMessage.textContent = error.message;
+        }
     }
-
-    let requestBody;
-    try {
-        requestBody = JSON.parse(event.body);
-    } catch (e) {
-        return { statusCode: 400, body: 'Bad Request' };
-    }
-
-    const { name, currentPassword, newPassword } = requestBody;
-
-    // 2. Получаем токен из куки
-    const cookieHeader = event.headers.cookie || '';
-    const token = cookieHeader
-        .split('; ')
-        .find(row => row.startsWith('token='))
-        ?.split('=')[1];
-
-    if (!token) {
-        return { statusCode: 401, body: 'Unauthorized' };
-    }
-
-    let decoded;
-    try {
-        // 3. Верифицируем токен
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (e) {
-        return { statusCode: 401, body: 'Invalid or expired token' };
-    }
-
-    const userEmail = decoded.email;
-
-    const client = new Client({
-        connectionString: process.env.NEON_DB_URL,
+    
+    // Функция для отправки данных формы
+    profileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('name').value;
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        
+        const body = {
+            name: name || undefined,
+            currentPassword,
+            newPassword: newPassword || undefined
+        };
+        
+        try {
+            const response = await fetch('/.netlify/functions/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+            
+            const data = await response.json();
+            
+            statusMessage.style.display = 'block';
+            statusMessage.textContent = data.message;
+            
+            if (response.ok) {
+                statusMessage.classList.remove('error');
+                statusMessage.classList.add('success');
+                // Обновляем данные на странице после успешного обновления
+                fetchUserData(); 
+            } else {
+                statusMessage.classList.remove('success');
+                statusMessage.classList.add('error');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            statusMessage.style.display = 'block';
+            statusMessage.classList.remove('success');
+            statusMessage.classList.add('error');
+            statusMessage.textContent = 'Ошибка сервера. Пожалуйста, попробуйте позже.';
+        }
     });
-
-    try {
-        await client.connect();
-
-        // 4. Проверяем текущий пароль (очень важный шаг)
-        const userQuery = 'SELECT password FROM users WHERE email = $1';
-        const userResult = await client.query(userQuery, [userEmail]);
-        
-        if (userResult.rows.length === 0 || userResult.rows[0].password !== currentPassword) {
-            return {
-                statusCode: 403,
-                body: JSON.stringify({ message: 'Неверный текущий пароль.' }),
-            };
-        }
-
-        // 5. Обновляем данные
-        let updateQuery = 'UPDATE users SET updated_at = NOW()';
-        let updateValues = [];
-        let paramCount = 1;
-
-        if (name) {
-            updateQuery += `, name = $${paramCount}`;
-            updateValues.push(name);
-            paramCount++;
-        }
-        
-        if (newPassword) {
-            updateQuery += `, password = $${paramCount}`;
-            updateValues.push(newPassword);
-            paramCount++;
-        }
-
-        updateQuery += ` WHERE email = $${paramCount}`;
-        updateValues.push(userEmail);
-
-        await client.query(updateQuery, updateValues);
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Профиль успешно обновлен!' }),
-        };
-
-    } catch (err) {
-        console.error('Ошибка при обновлении профиля:', err);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Ошибка сервера при обновлении профиля.' }),
-        };
-    } finally {
-        await client.end();
-    }
-};
+    
+    // Загружаем данные при первой загрузке страницы
+    fetchUserData();
+});
