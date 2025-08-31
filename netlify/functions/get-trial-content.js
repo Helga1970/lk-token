@@ -1,14 +1,17 @@
 const jwt = require('jsonwebtoken');
-const fetch = require('node-fetch');
+const fs = require('fs');
 
 exports.handler = async (event) => {
+    // Получаем заголовок с куки или пустую строку
     const cookieHeader = event.headers.cookie || '';
+    
+    // Ищем токен
     const token = cookieHeader
         .split('; ')
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
     
-    // Если токена нет, перенаправляем на страницу отказа в доступе для ознакомительного контента
+    // Если токен не найден, перенаправляем на страницу отказа
     if (!token) {
         return {
             statusCode: 302,
@@ -19,17 +22,11 @@ exports.handler = async (event) => {
     }
 
     try {
+        // Проверяем валидность токена
         jwt.verify(token, process.env.JWT_SECRET);
         
-        // Запрашиваем содержимое HTML-файла с основного сайта
-        const urlToFetch = `https://pro-culinaria.ru/trial-content.html`;
-        const response = await fetch(urlToFetch);
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch the content: ${response.statusText}`);
-        }
-        
-        const htmlContent = await response.text();
+        // Читаем содержимое локального файла
+        const htmlContent = fs.readFileSync('./trial-content.html', 'utf-8');
         
         return {
             statusCode: 200,
@@ -43,9 +40,7 @@ exports.handler = async (event) => {
         };
 
     } catch (e) {
-        console.error('Ошибка верификации токена:', e.name, 'Сообщение:', e.message);
-        
-        // Если токен просрочен, возвращаем на страницу входа для повторной авторизации
+        // Если токен просрочен, возвращаем на страницу входа
         if (e.name === 'TokenExpiredError') {
             return {
                 statusCode: 302,
@@ -54,7 +49,7 @@ exports.handler = async (event) => {
                 },
             };
         } else {
-            // В любом другом случае (неверный токен), перенаправляем на страницу отказа в доступе для ознакомительного контента
+            // В любом другом случае (неверный токен), перенаправляем на страницу отказа
             return {
                 statusCode: 302,
                 headers: {
