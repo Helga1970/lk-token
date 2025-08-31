@@ -52,12 +52,16 @@
         }
         .form-group {
             margin-bottom: 15px;
-            position: relative;
         }
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+        }
+        .password-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
         input[type="text"],
         input[type="password"] {
@@ -71,14 +75,11 @@
         .toggle-password {
             position: absolute;
             right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
             color: #555;
             font-size: 14px;
-            line-height: 1;
         }
         button[type="submit"] {
             background-color: #fb4d35;
@@ -131,13 +132,17 @@
             </div>
             <div class="form-group">
                 <label for="currentPassword">Текущий пароль:</label>
-                <input type="password" id="currentPassword" name="currentPassword">
-                <button type="button" class="toggle-password">Показать</button>
+                <div class="password-input-container">
+                    <input type="password" id="currentPassword" name="currentPassword">
+                    <button type="button" class="toggle-password">Показать</button>
+                </div>
             </div>
             <div class="form-group">
                 <label for="newPassword">Новый пароль:</label>
-                <input type="password" id="newPassword" name="newPassword">
-                <button type="button" class="toggle-password">Показать</button>
+                <div class="password-input-container">
+                    <input type="password" id="newPassword" name="newPassword">
+                    <button type="button" class="toggle-password">Показать</button>
+                </div>
             </div>
             <button type="submit">Сохранить изменения</button>
         </form>
