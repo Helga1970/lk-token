@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Функция для загрузки и отображения данных пользователя
     async function fetchUserData() {
         try {
-            const response = await fetch('/.netlify/functions/get-profile-data'); // Новый маршрут
+            const response = await fetch('/.netlify/functions/get-profile-data'); 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Ошибка загрузки данных профиля.');
@@ -17,10 +17,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             // Заполняем элементы данными
-            userNameElement.textContent = data.name;
-            userEmailElement.textContent = data.email; // Предполагаем, что email тоже есть в ответе
-            userSubscriptionElement.textContent = data.subscription_status;
-            subscriptionEndDateElement.textContent = new Date(data.subscription_end_date).toLocaleDateString('ru-RU');
+            userNameElement.textContent = data.name || 'Имя не указано';
+            userEmailElement.textContent = data.email || 'Email не указан'; 
+            
+            // Отображаем статус подписки
+            let subStatus;
+            if (data.subscription_type === '30_days') {
+                subStatus = '30 дней';
+            } else if (data.subscription_type === '365_days') {
+                subStatus = '365 дней';
+            } else {
+                subStatus = 'Подписка не активна';
+            }
+            userSubscriptionElement.textContent = subStatus;
+            
+            if (data.access_end_date) {
+                subscriptionEndDateElement.textContent = new Date(data.access_end_date).toLocaleDateString('ru-RU');
+            } else {
+                subscriptionEndDateElement.textContent = 'Дата не найдена';
+            }
             
         } catch (error) {
             console.error('Ошибка:', error);
