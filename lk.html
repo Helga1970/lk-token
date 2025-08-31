@@ -21,7 +21,7 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             color: #333;
-            position: relative; /* нужно для позиционирования кнопки профиля */
+            position: relative;
         }
 
         .lk-container {
@@ -38,8 +38,8 @@
         h1 {
             color: #fb4d35;
             margin-bottom: 30px;
-            font-weight: 500; /* меньше жирности */
-            font-size: 26px;  /* немного уменьшен размер */
+            font-weight: 500;
+            font-size: 26px;
         }
 
         .links-section {
@@ -110,7 +110,7 @@
             cursor: pointer;
             text-decoration: underline;
         }
-        
+
         .logout-button:hover {
             opacity: 0.8;
         }
@@ -142,10 +142,10 @@
     </style>
 </head>
 <body>
-    <a href="/profile.html" class="profile-link">Мой профиль</a> <!-- новая кнопка -->
+    <a href="/profile.html" class="profile-link">Мой профиль</a>
 
     <div class="lk-container">
-        <h1 id="welcomeMessage">Добро пожаловать в Личный кабинет!</h1>
+        <h1 id="welcomeMessage"></h1>
         
         <div class="links-section">
             <a href="/.netlify/functions/get-trial-content" class="lk-link">
@@ -162,7 +162,6 @@
     </div>
 
     <script>
-        // Проверяем авторизацию при загрузке страницы
         window.onload = function() {
             try {
                 const userData = localStorage.getItem('user');
@@ -173,7 +172,9 @@
                 const user = JSON.parse(userData);
                 const welcomeMessage = document.getElementById('welcomeMessage');
                 if (user && user.name) {
-                    welcomeMessage.textContent = `${user.name}, добро пожаловать в личный кабинет!`;
+                    welcomeMessage.innerHTML = `<span style="display: block; text-align: center;">${user.name}</span> <br>добро пожаловать в личный кабинет!`;
+                } else {
+                    welcomeMessage.innerHTML = 'Добро пожаловать в личный кабинет!';
                 }
             } catch (e) {
                 console.error('Ошибка при чтении данных пользователя из localStorage:', e);
