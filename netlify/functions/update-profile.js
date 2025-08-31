@@ -1,96 +1,95 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const profileForm = document.getElementById('profileForm');
-    const statusMessage = document.getElementById('statusMessage');
-    const userNameElement = document.getElementById('userName');
-    const userEmailElement = document.getElementById('userEmail');
-    const userSubscriptionElement = document.getElementById('userSubscription');
-    const subscriptionEndDateElement = document.getElementById('subscriptionEndDate');
-    
-    // Функция для загрузки и отображения данных пользователя
-    async function fetchUserData() {
-        try {
-            const response = await fetch('/.netlify/functions/get-profile-data'); 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Ошибка загрузки данных профиля.');
-            }
-            const data = await response.json();
-            
-            // Заполняем элементы данными
-            userNameElement.textContent = data.name || 'Имя не указано';
-            userEmailElement.textContent = data.email || 'Email не указан'; 
-            
-            // Отображаем статус подписки
-            let subStatus;
-            if (data.subscription_type === '30_days') {
-                subStatus = '30 дней';
-            } else if (data.subscription_type === '365_days') {
-                subStatus = '365 дней';
-            } else {
-                subStatus = 'Подписка не активна';
-            }
-            userSubscriptionElement.textContent = subStatus;
-            
-            if (data.access_end_date) {
-                subscriptionEndDateElement.textContent = new Date(data.access_end_date).toLocaleDateString('ru-RU');
-            } else {
-                subscriptionEndDateElement.textContent = 'Дата не найдена';
-            }
-            
-        } catch (error) {
-            console.error('Ошибка:', error);
-            statusMessage.style.display = 'block';
-            statusMessage.classList.add('error');
-            statusMessage.textContent = error.message;
-        }
+const { Client } = require('pg');
+const jwt = require('jsonwebtoken');
+
+exports.handler = async (event) => {
+    // 1. Проверяем, что это POST-запрос, так как мы отправляем данные.
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
     }
+
+    // 2. Получаем данные из запроса, отправленные с фронтенда.
+    const { name, currentPassword, newPassword } = JSON.parse(event.body);
+
+    // 3. Извлекаем email пользователя из JWT-токена, который хранится в куки.
+    const cookieHeader = event.headers.cookie || '';
+    const token = cookieHeader.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
     
-    // Функция для отправки данных формы
-    profileForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value;
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        
-        const body = {
-            name: name || undefined,
-            currentPassword,
-            newPassword: newPassword || undefined
-        };
-        
-        try {
-            const response = await fetch('/.netlify/functions/update-profile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-            
-            const data = await response.json();
-            
-            statusMessage.style.display = 'block';
-            statusMessage.textContent = data.message;
-            
-            if (response.ok) {
-                statusMessage.classList.remove('error');
-                statusMessage.classList.add('success');
-                // Обновляем данные на странице после успешного обновления
-                fetchUserData(); 
-            } else {
-                statusMessage.classList.remove('success');
-                statusMessage.classList.add('error');
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            statusMessage.style.display = 'block';
-            statusMessage.classList.remove('success');
-            statusMessage.classList.add('error');
-            statusMessage.textContent = 'Ошибка сервера. Пожалуйста, попробуйте позже.';
-        }
+    if (!token) {
+        return { statusCode: 401, body: JSON.stringify({ message: 'Неавторизованный доступ.' }) };
+    }
+
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+        return { statusCode: 401, body: JSON.stringify({ message: 'Недействительный или просроченный токен.' }) };
+    }
+
+    const userEmail = decoded.email;
+
+    // 4. Подключаемся к вашей базе данных Neon.
+    const client = new Client({
+        connectionString: process.env.NEON_DB_URL,
     });
-    
-    // Загружаем данные при первой загрузке страницы
-    fetchUserData();
-});
+
+    try {
+        await client.connect();
+
+        // 5. Проверяем, существует ли пользователь и получаем его текущий пароль.
+        const userQuery = 'SELECT password FROM users WHERE email = $1';
+        const userResult = await client.query(userQuery, [userEmail]);
+
+        if (userResult.rows.length === 0) {
+            return { statusCode: 404, body: JSON.stringify({ message: 'Пользователь не найден.' }) };
+        }
+        const user = userResult.rows[0];
+        
+        // 6. Ключевая проверка: сравниваем текущий пароль, введенный в форму, с паролем из базы.
+        if (newPassword && currentPassword !== user.password) {
+            return { statusCode: 400, body: JSON.stringify({ message: 'Текущий пароль неверный. Пожалуйста, попробуйте снова.' }) };
+        }
+        
+        let updateQuery = 'UPDATE users SET';
+        const updateValues = [];
+        let queryParts = [];
+
+        // 7. Собираем запрос для обновления имени, если оно было изменено.
+        if (name) {
+            queryParts.push('name = $' + (updateValues.length + 1));
+            updateValues.push(name);
+        }
+
+        // 8. Собираем запрос для обновления пароля, если он был изменен.
+        if (newPassword) {
+            queryParts.push('password = $' + (updateValues.length + 1));
+            updateValues.push(newPassword);
+        }
+
+        if (queryParts.length === 0) {
+            return { statusCode: 400, body: JSON.stringify({ message: 'Нечего обновлять.' }) };
+        }
+
+        updateQuery += ' ' + queryParts.join(', ');
+        updateQuery += ' WHERE email = $' + (updateValues.length + 1);
+        updateValues.push(userEmail);
+
+        // 9. Выполняем SQL-запрос для обновления данных в базе.
+        await client.query(updateQuery, updateValues);
+        
+        // 10. Отправляем успешный ответ фронтенду.
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Данные успешно обновлены." }),
+        };
+
+    } catch (err) {
+        // 11. Обрабатываем возможные ошибки.
+        console.error('Ошибка в serverless-функции:', err);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: "Ошибка сервера. Пожалуйста, попробуйте позже." }),
+        };
+    } finally {
+        await client.end();
+    }
+};
