@@ -115,6 +115,55 @@
             opacity: 0.8;
         }
 
+        /* СТИЛИ ДЛЯ ВСПЛЫВАЮЩЕГО ОКНА */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            color: #000;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #555;
+        }
+        
+        #popup-message {
+            margin: 0;
+        }
+        
+        #popup-message a {
+            color: #fb4d35;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .lk-container {
                 padding: 20px;
@@ -161,6 +210,12 @@
         <button class="logout-button" id="logoutButton">Выйти из кабинета</button>
     </div>
 
+    <div id="popup" class="popup-overlay" style="display: none;">
+      <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <p id="popup-message"></p>
+      </div>
+    </div>
     <script>
         window.onload = function() {
             try {
@@ -189,6 +244,52 @@
             localStorage.removeItem('user');
             await fetch('/.netlify/functions/logout', { method: 'POST' });
             window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
+        });
+        
+        document.querySelector('.links-section a[href*="get-content"]').addEventListener('click', async function(event) {
+            event.preventDefault(); 
+            const user = JSON.parse(localStorage.getItem('user'));
+            const popup = document.getElementById('popup');
+            const popupMessage = document.getElementById('popup-message');
+            
+            popup.style.display = 'none';
+            
+            if (!user || !user.email) {
+                popupMessage.innerHTML = 'Ошибка: Данные пользователя не найдены. Пожалуйста, попробуйте войти снова.';
+                popup.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/.netlify/functions/get-content?action=check-access', {
+                    headers: { 'X-User-Email': user.email }
+                });
+
+                if (response.ok) {
+                    window.location.href = 'https://pro-culinaria-library.proculinaria-book.ru/?access=true';
+                } else {
+                    const errorMessage = await response.text();
+                    const linkText = 'https://pro-culinaria.ru/aboutplatej';
+                    popupMessage.innerHTML = errorMessage.replace(linkText, `<a href="${linkText}" target="_blank">${linkText}</a>`);
+                    popup.style.display = 'block';
+                }
+
+            } catch (e) {
+                console.error('Ошибка:', e);
+                popupMessage.innerHTML = 'Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.';
+                popup.style.display = 'block';
+            }
+        });
+
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            document.getElementById('popup').style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            const popup = document.getElementById('popup');
+            if (event.target == popup) {
+                popup.style.display = 'none';
+            }
         });
         
         function equalizeTiles() {
