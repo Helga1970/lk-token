@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     if (email === 'admin@example.com' && password === 'admin') {
-        const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '2m' }); // Изменено на 2 минуты
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
