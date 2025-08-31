@@ -12,20 +12,15 @@
             line-height: 1.6;
             padding: 20px;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
         .nav-menu {
             display: flex;
-            gap: 15px; /* Увеличил отступ, чтобы выглядело как строка */
-            margin-bottom: 30px; /* Увеличил отступ, чтобы опустить белое поле */
+            gap: 15px;
+            margin-bottom: 20px;
             font-size: 16px;
             flex-wrap: wrap;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .nav-menu a, .nav-menu span {
             text-decoration: none;
@@ -39,6 +34,14 @@
             font-weight: bold;
             color: #fb4d35;
             cursor: default;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
             color: #fb4d35;
@@ -106,13 +109,13 @@
     </style>
 </head>
 <body>
+    <div class="nav-menu">
+        <a href="https://pro-culinaria.ru/">🏠</a>
+        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
+        <span class="active">Профиль</span>
+    </div>
+
     <div class="container">
-        <div class="nav-menu">
-            <a href="https://pro-culinaria.ru/">🏠</a>
-            <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
-            <span class="active">Профиль</span>
-        </div>
-        
         <h1>Мой профиль</h1>
         <div class="profile-info">
             <p><strong>Имя:</strong> <span id="userName"></span></p>
