@@ -78,12 +78,24 @@ exports.handler = async (event) => {
         };
 
     } catch (e) {
-        console.error('Неверный или просроченный токен:', e);
-        return {
-            statusCode: 302,
-            headers: {
-                'Location': '/unauthorized.html',
-            },
-        };
+        // Если ошибка связана с просроченным токеном, перенаправляем на вход
+        if (e.name === 'TokenExpiredError') {
+            console.error('Просроченный токен. Перенаправляем на страницу входа.');
+            return {
+                statusCode: 302,
+                headers: {
+                    'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
+                },
+            };
+        } else {
+            // В случае любой другой ошибки (неверная подпись, неверный формат), перенаправляем на 'unauthorized.html'
+            console.error('Неверный токен или другая ошибка:', e);
+            return {
+                statusCode: 302,
+                headers: {
+                    'Location': '/unauthorized.html',
+                },
+            };
+        }
     }
 };
