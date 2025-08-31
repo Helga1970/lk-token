@@ -21,9 +21,8 @@ exports.handler = async (event) => {
         // Проверяем только валидность токена
         jwt.verify(token, process.env.JWT_SECRET);
         
-        // --- ПРОКСИ-ЧАСТЬ ДЛЯ ОЗНАКОМИТЕЛЬНОЙ СТРАНИЦЫ ---
-        // Используем безопасный URL с латиницей
-        const urlToFetch = `https://pro-culinaria.ru/trial-content`; // <-- ИМЯ ФАЙЛА
+        // Запрашиваем содержимое HTML-файла с основного сайта
+        const urlToFetch = `https://pro-culinaria.ru/trial-content.html`;
         const response = await fetch(urlToFetch);
 
         if (!response.ok) {
@@ -44,20 +43,12 @@ exports.handler = async (event) => {
         };
 
     } catch (e) {
-        if (e.name === 'TokenExpiredError') {
-             return {
-                statusCode: 302,
-                headers: {
-                    'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
-                },
-            };
-        } else {
-             return {
-                statusCode: 403,
-                headers: {
-                    'Location': '/unauthorized.html',
-                },
-            };
-        }
+        console.error('Неверный или просроченный токен:', e);
+        return {
+            statusCode: 302,
+            headers: {
+                'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
+            },
+        };
     }
 };
