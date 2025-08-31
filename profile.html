@@ -20,31 +20,28 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: #fb4d35;
-        }
         .nav-menu {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 15px; /* Увеличил отступ, чтобы выглядело как строка */
+            margin-bottom: 30px; /* Увеличил отступ, чтобы опустить белое поле */
             font-size: 16px;
-            flex-wrap: wrap; /* Добавлено для адаптивности */
+            flex-wrap: wrap;
         }
         .nav-menu a, .nav-menu span {
             text-decoration: none;
             color: #555;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            transition: color 0.3s;
         }
         .nav-menu a:hover {
-            background-color: #eee;
+            color: #fb4d35;
         }
         .nav-menu .active {
-            background-color: #fb4d35;
-            color: white;
+            font-weight: bold;
+            color: #fb4d35;
             cursor: default;
+        }
+        h1 {
+            color: #fb4d35;
         }
         .profile-info p {
             font-size: 18px;
@@ -111,7 +108,7 @@
 <body>
     <div class="container">
         <div class="nav-menu">
-            <a href="https://pro-culinaria.ru/">Домик</a>
+            <a href="https://pro-culinaria.ru/">🏠</a>
             <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
             <span class="active">Профиль</span>
         </div>
