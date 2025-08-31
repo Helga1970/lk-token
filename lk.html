@@ -64,8 +64,6 @@
             text-align: center;
             box-sizing: border-box;
             width: 100%;
-            border: none;
-            cursor: pointer;
         }
 
         .lk-link:hover {
@@ -125,10 +123,10 @@
         <div class="links-section">
             <a href="https://for-dating.proculinaria-book.ru/" class="lk-link">Ознакомительный раздел</a>
 
-            <button id="library-link" class="lk-link">
+            <a href="/.netlify/functions/get-content" class="lk-link">
                 <span>Читальный зал Библиотеки</span>
                 <span class="lk-subtext">для доступа требуется действующая подписка</span>
-            </button>
+            </a>
         </div>
         
         <button class="logout-button" id="logoutButton">Выйти из кабинета</button>
@@ -157,13 +155,7 @@
             await fetch('/.netlify/functions/logout', { method: 'POST' });
             window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
         });
-
-        // --- НОВЫЙ СКРИПТ ДЛЯ КНОПКИ БИБЛИОТЕКИ ---
-        document.getElementById('library-link').addEventListener('click', function() {
-            const url = `/.netlify/functions/get-content?t=${new Date().getTime()}`;
-            window.location.href = url;
-        });
-
+        
         function equalizeTiles() {
             const tiles = Array.from(document.querySelectorAll('.links-section .lk-link'));
             if (!tiles.length) return;
