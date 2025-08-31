@@ -1,6 +1,5 @@
 const { Client } = require('pg');
 const jwt = require('jsonwebtoken');
-const fetch = require('node-fetch');
 
 // --- Функция проверки подписки ---
 const checkSubscription = async (email) => {
@@ -25,15 +24,27 @@ const checkSubscription = async (email) => {
     }
 };
 
+// --- HTML-код вашей страницы ---
+const protectedContent = `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="margin:0; padding:0;">
+    <iframe src="https://pro-culinaria.ru/chitalnyizal" style="width:100%; height:100vh; border:none;"></iframe>
+</body>
+</html>
+`;
+
 // --- Главная функция-обработчик ---
 exports.handler = async (event) => {
-    const cookieHeader = event.headers.cookie || '';
-    const token = cookieHeader
-        .split('; ')
+    // Получаем токен из куки.
+    const token = event.headers.cookie
+        ?.split('; ')
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
     
-    // Если токена нет, всегда перенаправляем на страницу 'unauthorized.html'
     if (!token) {
         return {
             statusCode: 302,
@@ -48,7 +59,6 @@ exports.handler = async (event) => {
         const userEmail = decoded.email;
         const hasAccess = await checkSubscription(userEmail);
 
-        // Если подписки нет, перенаправляем на страницу 'unauthorized.html'
         if (!hasAccess) {
             return {
                 statusCode: 302,
@@ -58,43 +68,22 @@ exports.handler = async (event) => {
             };
         }
         
-        // --- ПРОКСИ-ЧАСТЬ (остаётся без изменений) ---
-        const response = await fetch('https://pro-culinaria.ru/chitalnyizal');
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Tilda page: ${response.statusText}`);
-        }
-        const htmlContent = await response.text();
-        
+        // Если проверка прошла, возвращаем HTML-страницу
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'text/html',
-                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
             },
-            body: htmlContent,
+            body: protectedContent,
         };
 
     } catch (e) {
-        // Если ошибка связана с просроченным токеном, перенаправляем на вход
-        if (e.name === 'TokenExpiredError') {
-            console.error('Просроченный токен. Перенаправляем на страницу входа.');
-            return {
-                statusCode: 302,
-                headers: {
-                    'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
-                },
-            };
-        } else {
-            // В случае любой другой ошибки (неверная подпись, неверный формат), перенаправляем на 'unauthorized.html'
-            console.error('Неверный токен или другая ошибка:', e);
-            return {
-                statusCode: 302,
-                headers: {
-                    'Location': '/unauthorized.html',
-                },
-            };
-        }
+        console.error('Неверный или просроченный токен:', e);
+        return {
+            statusCode: 302,
+            headers: {
+                'Location': '/unauthorized.html',
+            },
+        };
     }
 };
