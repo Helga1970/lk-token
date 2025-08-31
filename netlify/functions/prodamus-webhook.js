@@ -137,7 +137,7 @@ exports.handler = async (event) => {
             const token = jwt.sign(
                 { userId: user.user_id, email: user.email },
                 process.env.JWT_SECRET,
-                { expiresIn: '1d' }
+                { expiresIn: '2m' }
             );
 
             // Отправка токена в куки
