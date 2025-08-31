@@ -66,11 +66,11 @@ exports.handler = async (event) => {
         const hasAccess = await checkSubscription(userEmail);
 
         if (!hasAccess) {
-            return {
-                statusCode: 302,
-                headers: {
-                    'Location': '/unauthorized.html',
-                },
+            // ИЗМЕНЕНИЕ: Вместо редиректа возвращаем ошибку с кодом 403
+            const errorBody = 'Доступ запрещён. Для доступа требуется действующая подписка. Для оплаты подписки перейдите по ссылке: https://pro-culinaria.ru/aboutplatej';
+            return { 
+                statusCode: 403,
+                body: errorBody
             };
         }
         
