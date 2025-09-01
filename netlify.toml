@@ -8,13 +8,11 @@
   status = 200
 
 [[redirects]]
-  from = "/content"
+  from = "/content.html"
   to = "/.netlify/functions/get-content"
-  status = 200
-  force = true
+  status = 301
 
 [[redirects]]
-  from = "/trial-content"
+  from = "/trial-content.html"
   to = "/.netlify/functions/get-trial-content"
-  status = 200
-  force = true
+  status = 301
