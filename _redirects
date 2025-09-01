@@ -1,2 +1,2 @@
-/content /functions/get-content 200
-/trial-content /functions/get-trial-content 200
+/content        /.netlify/functions/get-content        200!
+/trial-content  /.netlify/functions/get-trial-content  200!
