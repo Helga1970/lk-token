@@ -71,7 +71,7 @@ const handleProdamusWebhook = async (client, payload) => {
         const formattedEndDate = endDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
         const mailOptions = {
-            from: 'pro-culinaria@proculinaria.ru',
+            from: 'pro-culinaria@pro-culinaria.ru',
             to: customerEmail,
             subject: 'Доступ к Личному кабинету',
             html: `
