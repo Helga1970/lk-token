@@ -6,3 +6,15 @@
   from = "/api/*"
   to = "/.netlify/functions/auth/:splat"
   status = 200
+
+[[redirects]]
+  from = "/content"
+  to = "/.netlify/functions/get-content"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/trial-content"
+  to = "/.netlify/functions/get-trial-content"
+  status = 200
+  force = true
