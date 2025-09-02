@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет | Pro-Culinaria</title>
     <style>
-        /* CSS-стили, которые вы прислали для навигационной строки */
+        /* CSS-стили для навигационной строки */
         .nav-menu {
             display: flex;
             gap: 15px;
@@ -27,10 +27,11 @@
             color: #fb4d35;
         }
 
-        .nav-menu .active {
+        .nav-menu a.active {
             font-weight: bold;
             color: #fb4d35;
             cursor: default;
+            text-decoration: underline;
         }
 
         /* --- Ваши существующие стили --- */
@@ -41,7 +42,7 @@
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column; /* Изменено для правильного расположения элементов */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -224,11 +225,9 @@
 <body>
     <div class="nav-menu">
         <a href="https://pro-culinaria.ru/">🏠 На главную</a>
-        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
-        <span class="active">Профиль</span>
+        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html" class="active">Личный кабинет</a>
+        <a href="/profile.html">Мой профиль</a>
     </div>
-
-    <a href="/profile.html" class="profile-link">Мой профиль</a>
 
     <div class="lk-container">
         <h1 id="welcomeMessage"></h1>
