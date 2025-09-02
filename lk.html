@@ -5,6 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет | Pro-Culinaria</title>
     <style>
+        /* CSS-стили для навигационной строки */
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            flex-wrap: wrap;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-menu a, .nav-menu span {
+            text-decoration: none;
+            color: #555;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #fb4d35;
+        }
+
+        .nav-menu a.active {
+            font-weight: bold;
+            color: #fb4d35;
+            cursor: default;
+            text-decoration: underline;
+        }
+
+        /* --- Ваши существующие стили --- */
         @import url('https://fonts.googleapis.com/css2?family=Circe+Rounded:wght@400;700&display=swap');
 
         body {
@@ -12,6 +42,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -21,9 +52,9 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             color: #333;
-            position: relative; /* нужно для позиционирования кнопки профиля */
+            position: relative;
         }
-
+        
         .lk-container {
             background-color: rgba(255, 255, 255, 0.85);
             padding: 30px;
@@ -38,8 +69,8 @@
         h1 {
             color: #fb4d35;
             margin-bottom: 30px;
-            font-weight: 500; /* меньше жирности */
-            font-size: 26px;  /* немного уменьшен размер */
+            font-weight: 500;
+            font-size: 26px;
         }
 
         .links-section {
@@ -116,54 +147,54 @@
             opacity: 0.8;
         }
         /* ИЗМЕНЕННЫЕ СТИЛИ ДЛЯ ВСПЛЫВАЮЩЕГО ОКНА */
-.popup-overlay {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: auto;
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    box-sizing: border-box;
-}
+        .popup-overlay {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            box-sizing: border-box;
+        }
 
-.popup-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: left; /* Смещаем текст влево */
-    position: relative;
-    color: #000;
-}
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            position: relative;
+            color: #000;
+        }
 
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px; /* Увеличил отступ, чтобы текст не накладывался */
-    font-size: 20px;
-    font-weight: bold;
-    color: #fb4d35; /* Сделал крестик красным */
-    cursor: pointer;
-}
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fb4d35;
+            cursor: pointer;
+        }
 
-.close-btn:hover {
-    color: #e5462e;
-}
+        .close-btn:hover {
+            color: #e5462e;
+        }
 
-#popup-message {
-    margin: 0;
-    padding-right: 25px; /* Добавил отступ справа, чтобы текст не выходил за пределы */
-    word-wrap: break-word; /* Перенос длинных слов */
-}
+        #popup-message {
+            margin: 0;
+            padding-right: 25px;
+            word-wrap: break-word;
+        }
 
-#popup-message a {
-    color: #fb4d35;
-    font-weight: bold;
-    text-decoration: underline;
-}
+        #popup-message a {
+            color: #fb4d35;
+            font-weight: bold;
+            text-decoration: underline;
+        }
 
         @media (max-width: 768px) {
             .lk-container {
@@ -192,7 +223,11 @@
     </style>
 </head>
 <body>
-    <a href="/profile.html" class="profile-link">Мой профиль</a> <!-- новая кнопка -->
+    <div class="nav-menu">
+        <a href="https://pro-culinaria.ru/">🏠 На главную</a>
+        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html" class="active">Личный кабинет</a>
+        <a href="/profile.html">Мой профиль</a>
+    </div>
 
     <div class="lk-container">
         <h1 id="welcomeMessage"></h1>
@@ -207,12 +242,9 @@
                 <span>Читальный зал Библиотеки</span>
                 <span class="lk-subtext">для доступа требуется действующая подписка</span>
             </a>
-             <div id="popup" class="popup-overlay" style="display: none;">
-
-              <p id="popup-message"></p>
-
-              <span class="close-btn">&times;</span>
-
+            <div id="popup" class="popup-overlay" style="display: none;">
+                <p id="popup-message"></p>
+                <span class="close-btn">&times;</span>
             </div>
         </div>
         
@@ -222,13 +254,14 @@
     <script>
         let popupTimer;
 
-function closePopup() {
-    const popup = document.getElementById('popup');
-    popup.style.display = 'none';
-    if (popupTimer) {
-        clearTimeout(popupTimer);
-    }
-}
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
+            if (popupTimer) {
+                clearTimeout(popupTimer);
+            }
+        }
+
         window.onload = function() {
             try {
                 const userData = localStorage.getItem('user');
@@ -239,11 +272,9 @@ function closePopup() {
                 const user = JSON.parse(userData);
                 const welcomeMessage = document.getElementById('welcomeMessage');
                 if (user && user.name) {
-                   welcomeMessage.innerHTML = `<span style="display: block; text-align: center; margin-bottom: -15px;">${user.name},</span><br>добро пожаловать в личный кабинет!`;
-
-} else {
-
-    welcomeMessage.innerHTML = 'Добро пожаловать в личный кабинет!';
+                    welcomeMessage.innerHTML = `<span style="display: block; text-align: center; margin-bottom: -15px;">${user.name},</span><br>добро пожаловать в личный кабинет!`;
+                } else {
+                    welcomeMessage.innerHTML = 'Добро пожаловать в личный кабинет!';
                 }
             } catch (e) {
                 console.error('Ошибка при чтении данных пользователя из localStorage:', e);
@@ -259,49 +290,50 @@ function closePopup() {
             await fetch('/.netlify/functions/logout', { method: 'POST' });
             window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
         });
+
         document.querySelector('.links-section a[href*="get-content"]').addEventListener('click', async function(event) {
-    event.preventDefault();
+            event.preventDefault();
 
-    const user = JSON.parse(localStorage.getItem('user'));
-    const popup = document.getElementById('popup');
-    const popupMessage = document.getElementById('popup-message');
+            const user = JSON.parse(localStorage.getItem('user'));
+            const popup = document.getElementById('popup');
+            const popupMessage = document.getElementById('popup-message');
 
-    closePopup(); // Закрываем любое предыдущее окно
+            closePopup();
 
-    if (!user || !user.email) {
-        popupMessage.innerHTML = 'Ошибка: Данные пользователя не найдены. Пожалуйста, попробуйте войти снова.';
-        popup.style.display = 'block';
-        return;
-    }
+            if (!user || !user.email) {
+                popupMessage.innerHTML = 'Ошибка: Данные пользователя не найдены. Пожалуйста, попробуйте войти снова.';
+                popup.style.display = 'block';
+                return;
+            }
 
-    try {
-        const response = await fetch('/.netlify/functions/get-content?action=check-access', {
-            headers: { 'X-User-Email': user.email }
+            try {
+                const response = await fetch('/.netlify/functions/get-content?action=check-access', {
+                    headers: { 'X-User-Email': user.email }
+                });
+
+                if (response.ok) {
+                    window.location.href = '/.netlify/functions/get-content';
+                } else {
+                    const errorMessage = await response.text();
+                    const linkText = 'https://pro-culinaria.ru/aboutplatej';
+                    popupMessage.innerHTML = errorMessage.replace(linkText, `<a href="${linkText}" target="_blank">${linkText}</a>`);
+                    popup.style.display = 'block';
+                    popupTimer = setTimeout(closePopup, 20000);
+                }
+            } catch (e) {
+                console.error('Ошибка:', e);
+                popupMessage.innerHTML = 'Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.';
+                popup.style.display = 'block';
+                popupTimer = setTimeout(closePopup, 20000);
+            }
         });
 
-        if (response.ok) {
-            window.location.href = '/.netlify/functions/get-content';
-        } else {
-            const errorMessage = await response.text();
-            const linkText = 'https://pro-culinaria.ru/aboutplatej';
-            popupMessage.innerHTML = errorMessage.replace(linkText, `<a href="${linkText}" target="_blank">${linkText}</a>`);
-            popup.style.display = 'block';
-            popupTimer = setTimeout(closePopup, 20000); // Закрыть через 20 секунд
-        }
-
-    } catch (e) {
-        console.error('Ошибка:', e);
-        popupMessage.innerHTML = 'Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.';
-        popup.style.display = 'block';
-        popupTimer = setTimeout(closePopup, 20000); // Закрыть через 20 секунд
-    }
-});
-
-document.querySelector('.links-section').addEventListener('click', (event) => {
-    if (event.target.closest('.close-btn')) {
-        closePopup();
-    }
-});
+        document.querySelector('.links-section').addEventListener('click', (event) => {
+            if (event.target.closest('.close-btn')) {
+                closePopup();
+            }
+        });
+        
         function equalizeTiles() {
             const tiles = Array.from(document.querySelectorAll('.links-section .lk-link'));
             if (!tiles.length) return;
