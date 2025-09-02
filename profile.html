@@ -30,12 +30,6 @@
             color: #555;
             transition: color 0.3s;
         }
-        /* ИСПРАВЛЕНИЕ: Новые стили для выравнивания иконки и текста */
-        .nav-menu a {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px; /* Отступ между иконкой и текстом */
-        }
         .nav-menu a:hover {
             color: #fb4d35;
         }
@@ -43,9 +37,6 @@
             font-weight: bold;
             color: #fb4d35;
             cursor: default;
-        }
-        .nav-menu .home-link .icon {
-            line-height: 1; 
         }
         .container {
             max-width: 600px;
@@ -123,10 +114,7 @@
 </head>
 <body>
     <div class="nav-menu">
-        <a href="https://pro-culinaria.ru/" class="home-link">
-            <span class="icon">🏠</span>
-            <span>На главную</span>
-        </a>
+        <a href="https://pro-culinaria.ru/">На главную</a>
         <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
         <span class="active">Профиль</span>
     </div>
