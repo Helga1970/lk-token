@@ -14,7 +14,7 @@
         }
         .nav-menu {
             display: flex;
-            gap: 15px;
+            gap: 15px; /* Задаем отступ между элементами меню */
             margin-bottom: 20px;
             font-size: 16px;
             flex-wrap: nowrap;
@@ -30,24 +30,6 @@
             color: #555;
             transition: color 0.3s;
         }
-        /* ИСПРАВЛЕНИЕ: Новые стили для выравнивания иконки и текста */
-        .nav-menu a {
-            display: flex;
-            align-items: center;
-        }
-        .nav-menu a.home-link {
-            gap: 5px; /* Небольшой отступ между домиком и текстом */
-        }
-        .nav-menu a.home-link span {
-            white-space: nowrap;
-            line-height: 1;
-        }
-        .nav-menu a.home-link .icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
         .nav-menu a:hover {
             color: #fb4d35;
         }
@@ -55,6 +37,13 @@
             font-weight: bold;
             color: #fb4d35;
             cursor: default;
+        }
+        /* Новые стили для разделения иконки и текста */
+        .nav-menu a .home-icon {
+            margin-right: 5px; /* Отступ между иконкой и текстом */
+            position: relative;
+            top: -2px; /* Поднимаем иконку немного вверх */
+            font-size: 18px;
         }
         .container {
             max-width: 600px;
@@ -132,9 +121,8 @@
 </head>
 <body>
     <div class="nav-menu">
-        <a href="https://pro-culinaria.ru/" class="home-link">
-            <span class="icon">🏠</span>
-            <span>На главную</span>
+        <a href="https://pro-culinaria.ru/">
+            <span class="home-icon">🏠</span>На главную
         </a>
         <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
         <a href="https://pro-culinaria-lk.proculinaria-book.ru/profile.html" class="active">Мой профиль</a>
