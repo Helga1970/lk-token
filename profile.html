@@ -17,12 +17,19 @@
             gap: 15px;
             margin-bottom: 20px;
             font-size: 16px;
-            flex-wrap: wrap;
-            max-width: 600px;
+            /* ИСПРАВЛЕНИЕ: устанавливаем nowrap, чтобы элементы не переносились */
+            flex-wrap: nowrap;
+            /* Обеспечиваем, что контейнер будет достаточной ширины для содержимого */
+            width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            /* Добавим скролл, если элементы все-таки не поместятся */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* Улучшает скроллинг на iOS */
         }
         .nav-menu a, .nav-menu span {
+            /* Добавляем white-space: nowrap, чтобы текст не переносился внутри ссылок */
+            white-space: nowrap;
             text-decoration: none;
             color: #555;
             transition: color 0.3s;
