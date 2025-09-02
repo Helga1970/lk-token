@@ -3,357 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Личный кабинет | Pro-Culinaria</title>
+    <title>Мой профиль | Pro-Culinaria</title>
     <style>
-        /* CSS-стили для навигационной строки */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
         .nav-menu {
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
             font-size: 16px;
-            flex-wrap: wrap;
-            max-width: 600px;
+            flex-wrap: nowrap;
+            width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-
         .nav-menu a, .nav-menu span {
+            /* Объединяем стили для выравнивания в одном блоке */
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
             text-decoration: none;
             color: #555;
             transition: color 0.3s;
         }
-
         .nav-menu a:hover {
             color: #fb4d35;
         }
-
-        .nav-menu a.active {
+        .nav-menu .active {
             font-weight: bold;
             color: #fb4d35;
             cursor: default;
-            text-decoration: underline;
         }
-
-        /* --- Ваши существующие стили --- */
-        @import url('https://fonts.googleapis.com/css2?family=Circe+Rounded:wght@400;700&display=swap');
-
-        body {
-            font-family: 'Circe Rounded', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-image: url('a7f3dec3-aa46-42ce-a500-d40abb995b63.png');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #333;
-            position: relative;
-        }
-        
-        .lk-container {
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 90%;
+        .container {
             max-width: 600px;
-            box-sizing: border-box;
-            border-radius: 0;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
             color: #fb4d35;
-            margin-bottom: 30px;
-            font-weight: 500;
-            font-size: 26px;
         }
-
-        .links-section {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 30px;
-            position: relative;
+        .profile-info p {
+            font-size: 18px;
+            margin: 10px 0;
         }
-
-        .lk-link {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 18px;
-            min-height: 50px;
-            background-color: #fb4d35;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 700;
-            transition: background-color 0.3s ease;
-            border-radius: 0;
-            text-align: center;
-            box-sizing: border-box;
-            width: 100%;
+        .form-group {
+            margin-bottom: 15px;
         }
-
-        .lk-link:hover {
-            background-color: #e5462e;
-        }
-
-        .lk-link .lk-subtext {
+        label {
             display: block;
-            font-size: 11px;
-            font-weight: 400;
-            color: #ffffff;
-            margin-top: 6px;
-            line-height: 1.1;
-            text-align: center;
-            opacity: 0.95;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
-
-        .profile-link {
+        .password-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            padding-right: 70px;
+        }
+        .toggle-password {
             position: absolute;
-            top: 15px;
-            right: 20px;
-            background-color: #fb4d35;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 700;
-            padding: 6px 12px;
-            transition: background-color 0.3s ease;
-        }
-
-        .profile-link:hover {
-            background-color: #e5462e;
-        }
-
-        .logout-button {
-            margin-top: 40px;
+            right: 10px;
             background: none;
             border: none;
-            color: #fb4d35;
-            font-family: 'Circe Rounded', sans-serif;
+            cursor: pointer;
+            color: #555;
+            font-size: 14px;
+        }
+        button[type="submit"] {
+            background-color: #fb4d35;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 16px;
-            cursor: pointer;
-            text-decoration: underline;
         }
-        
-        .logout-button:hover {
-            opacity: 0.8;
+        button[type="submit"]:hover {
+            background-color: #e5462e;
         }
-        /* ИЗМЕНЕННЫЕ СТИЛИ ДЛЯ ВСПЛЫВАЮЩЕГО ОКНА */
-        .popup-overlay {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: auto;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            box-sizing: border-box;
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
         }
-
-        .popup-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            text-align: left;
-            position: relative;
-            color: #000;
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
         }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #fb4d35;
-            cursor: pointer;
-        }
-
-        .close-btn:hover {
-            color: #e5462e;
-        }
-
-        #popup-message {
-            margin: 0;
-            padding-right: 25px;
-            word-wrap: break-word;
-        }
-
-        #popup-message a {
-            color: #fb4d35;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .lk-container {
-                padding: 20px;
-                width: 95%;
-            }
-            h1 {
-                font-size: 22px;
-                margin-bottom: 20px;
-            }
-            .lk-link {
-                font-size: 15px;
-                padding: 9px 14px;
-            }
-            .lk-link .lk-subtext {
-                font-size: 10px;
-                margin-top: 4px;
-            }
-            .profile-link {
-                font-size: 13px;
-                padding: 5px 10px;
-                top: 10px;
-                right: 15px;
-            }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
     <div class="nav-menu">
-        <a href="https://pro-culinaria.ru/">🏠 На главную</a>
-        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html" class="active">Личный кабинет</a>
-        <a href="/profile.html">Мой профиль</a>
+        <a href="https://pro-culinaria.ru/" class="home-link">🏠 На главную</a>
+        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
+        <span class="active">Профиль</span>
     </div>
 
-    <div class="lk-container">
-        <h1 id="welcomeMessage"></h1>
-        
-        <div class="links-section">
-            <a href="/.netlify/functions/get-trial-content" class="lk-link">
-                <span>Ознакомительный раздел</span>
-                <span class="lk-subtext"></span>
-            </a>
-
-            <a href="/.netlify/functions/get-content" class="lk-link">
-                <span>Читальный зал Библиотеки</span>
-                <span class="lk-subtext">для доступа требуется действующая подписка</span>
-            </a>
-            <div id="popup" class="popup-overlay" style="display: none;">
-                <p id="popup-message"></p>
-                <span class="close-btn">&times;</span>
-            </div>
+    <div class="container">
+        <h1>Мой профиль</h1>
+        <div class="profile-info">
+            <p><strong>Имя:</strong> <span id="userName"></span></p>
+            <p><strong>Email:</strong> <span id="userEmail"></span></p>
+            <p><strong>Подписка:</strong> <span id="userSubscription"></span></p>
+            <p><strong>Срок действия подписки истекает:</strong> <span id="subscriptionEndDate"></span></p>
         </div>
         
-        <button class="logout-button" id="logoutButton">Выйти из кабинета</button>
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="name">Изменить имя:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="currentPassword">Текущий пароль:</label>
+                <div class="password-input-container">
+                    <input type="password" id="currentPassword" name="currentPassword">
+                    <button type="button" class="toggle-password">Показать</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="newPassword">Новый пароль:</label>
+                <div class="password-input-container">
+                    <input type="password" id="newPassword" name="newPassword">
+                    <button type="button" class="toggle-password">Показать</button>
+                </div>
+            </div>
+            <button type="submit">Сохранить изменения</button>
+        </form>
+        <div id="statusMessage" class="message"></div>
     </div>
 
+    <script src="profile.js"></script>
     <script>
-        let popupTimer;
-
-        function closePopup() {
-            const popup = document.getElementById('popup');
-            popup.style.display = 'none';
-            if (popupTimer) {
-                clearTimeout(popupTimer);
-            }
-        }
-
-        window.onload = function() {
-            try {
-                const userData = localStorage.getItem('user');
-                if (!userData) {
-                    window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
-                    return;
-                }
-                const user = JSON.parse(userData);
-                const welcomeMessage = document.getElementById('welcomeMessage');
-                if (user && user.name) {
-                    welcomeMessage.innerHTML = `<span style="display: block; text-align: center; margin-bottom: -15px;">${user.name},</span><br>добро пожаловать в личный кабинет!`;
-                } else {
-                    welcomeMessage.innerHTML = 'Добро пожаловать в личный кабинет!';
-                }
-            } catch (e) {
-                console.error('Ошибка при чтении данных пользователя из localStorage:', e);
-                localStorage.removeItem('user');
-                window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
-                return;
-            }
-            equalizeTiles();
-        };
-
-        document.getElementById('logoutButton').addEventListener('click', async function() {
-            localStorage.removeItem('user');
-            await fetch('/.netlify/functions/logout', { method: 'POST' });
-            window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
-        });
-
-        document.querySelector('.links-section a[href*="get-content"]').addEventListener('click', async function(event) {
-            event.preventDefault();
-
-            const user = JSON.parse(localStorage.getItem('user'));
-            const popup = document.getElementById('popup');
-            const popupMessage = document.getElementById('popup-message');
-
-            closePopup();
-
-            if (!user || !user.email) {
-                popupMessage.innerHTML = 'Ошибка: Данные пользователя не найдены. Пожалуйста, попробуйте войти снова.';
-                popup.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('/.netlify/functions/get-content?action=check-access', {
-                    headers: { 'X-User-Email': user.email }
-                });
-
-                if (response.ok) {
-                    window.location.href = '/.netlify/functions/get-content';
-                } else {
-                    const errorMessage = await response.text();
-                    const linkText = 'https://pro-culinaria.ru/aboutplatej';
-                    popupMessage.innerHTML = errorMessage.replace(linkText, `<a href="${linkText}" target="_blank">${linkText}</a>`);
-                    popup.style.display = 'block';
-                    popupTimer = setTimeout(closePopup, 20000);
-                }
-            } catch (e) {
-                console.error('Ошибка:', e);
-                popupMessage.innerHTML = 'Произошла ошибка при получении доступа к материалам. Пожалуйста, попробуйте позже.';
-                popup.style.display = 'block';
-                popupTimer = setTimeout(closePopup, 20000);
-            }
-        });
-
-        document.querySelector('.links-section').addEventListener('click', (event) => {
-            if (event.target.closest('.close-btn')) {
-                closePopup();
-            }
-        });
-        
-        function equalizeTiles() {
-            const tiles = Array.from(document.querySelectorAll('.links-section .lk-link'));
-            if (!tiles.length) return;
-            tiles.forEach(t => t.style.height = 'auto');
-            let max = 0;
-            tiles.forEach(t => {
-                const h = t.offsetHeight;
-                if (h > max) max = h;
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', () => {
+                const passwordInput = button.previousElementSibling;
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                button.textContent = type === 'password' ? 'Показать' : 'Скрыть';
             });
-            if (max < 50) max = 50;
-            tiles.forEach(t => t.style.height = max + 'px');
-        }
-
-        let _resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(_resizeTimer);
-            _resizeTimer = setTimeout(equalizeTiles, 120);
         });
-
-        document.fonts && document.fonts.ready.then(equalizeTiles).catch(()=>{});
     </script>
 </body>
 </html>
