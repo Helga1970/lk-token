@@ -17,12 +17,19 @@
             gap: 15px;
             margin-bottom: 20px;
             font-size: 16px;
-            flex-wrap: wrap;
-            max-width: 600px;
+            flex-wrap: nowrap;
+            width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .nav-menu a, .nav-menu span {
+            /* Новые стили для выравнивания */
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
             text-decoration: none;
             color: #555;
             transition: color 0.3s;
@@ -111,7 +118,7 @@
 </head>
 <body>
     <div class="nav-menu">
-        <a href="https://pro-culinaria.ru/">🏠</a>
+        <a href="https://pro-culinaria.ru/">🏠 На главную</a>
         <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html">Личный кабинет</a>
         <span class="active">Профиль</span>
     </div>
@@ -122,7 +129,7 @@
             <p><strong>Имя:</strong> <span id="userName"></span></p>
             <p><strong>Email:</strong> <span id="userEmail"></span></p>
             <p><strong>Подписка:</strong> <span id="userSubscription"></span></p>
-            <p><strong>Срок действия подписки:</strong> <span id="subscriptionEndDate"></span></p>
+            <p><strong>Срок действия подписки истекает:</strong> <span id="subscriptionEndDate"></span></p>
         </div>
         
         <form id="profileForm">
