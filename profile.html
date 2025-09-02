@@ -14,7 +14,7 @@
         }
         .nav-menu {
             display: flex;
-            gap: 15px; /* Задаем отступ между элементами меню */
+            gap: 15px;
             margin-bottom: 20px;
             font-size: 16px;
             flex-wrap: nowrap;
@@ -29,10 +29,24 @@
             text-decoration: none;
             color: #555;
             transition: color 0.3s;
-            /* ИСПРАВЛЕНИЕ: Используем inline-flex для выравнивания содержимого */
+        }
+        /* ИСПРАВЛЕНИЕ: Новые стили для выравнивания иконки и текста */
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+        }
+        .nav-menu a.home-link {
+            gap: 5px; /* Небольшой отступ между домиком и текстом */
+        }
+        .nav-menu a.home-link span {
+            white-space: nowrap;
+            line-height: 1;
+        }
+        .nav-menu a.home-link .icon {
             display: inline-flex;
             align-items: center;
-            gap: 5px; /* Отступ между иконкой и текстом */
+            justify-content: center;
+            line-height: 1;
         }
         .nav-menu a:hover {
             color: #fb4d35;
@@ -41,10 +55,6 @@
             font-weight: bold;
             color: #fb4d35;
             cursor: default;
-        }
-        .nav-menu .home-link .icon {
-            /* Убеждаемся, что иконка не сдвигается */
-            line-height: 1; 
         }
         .container {
             max-width: 600px;
