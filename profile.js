@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 // Объединяем дату и время для отображения
-                subscriptionEndDateElement.textContent = `${formattedDate}, ${formattedTime}`;
+                subscriptionEndDateElement.textContent = `${formattedDate}, в ${formattedTime}`;
 
             } else {
                 // Подписки нет или она неактивна
