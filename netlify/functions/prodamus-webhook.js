@@ -21,20 +21,21 @@ const handleProdamusWebhook = async (client, payload) => {
         };
     }
     let accessDays;
-    let subscriptionType;
-    const paymentSum = parseFloat(payload.sum);
-    if (paymentSum === 350.00) {
-        accessDays = 30;
-        subscriptionType = '30';
-    } else if (paymentSum === 3000.00) {
-        accessDays = 365;
-        subscriptionType = '365';
-    } else {
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Unknown payment amount." }),
-        };
-    }
+let subscriptionType;
+const paymentSum = parseFloat(payload.sum);
+
+if (paymentSum === 350.00) {
+    accessDays = 30;
+    subscriptionType = accessDays; // Это число: 30
+} else if (paymentSum === 3000.00) {
+    accessDays = 365;
+    subscriptionType = accessDays; // Это число: 365
+} else {
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ message: "Unknown payment amount." }),
+    };
+}
     const password = crypto.randomBytes(4).toString('hex');
     const userResult = await client.query('SELECT * FROM users WHERE email = $1', [customerEmail]);
     if (userResult.rows.length > 0) {
