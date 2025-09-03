@@ -185,7 +185,7 @@ exports.handler = async (event) => {
                 }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Set-Cookie': `token=${token}; Path=/; Domain=.proculinaria-book.ru; HttpOnly; Secure; SameSite=None; Max-Age=86400`,
+                    'Set-Cookie': `token=${token}; Path=/; Domain=.pro-culinaria.ru; HttpOnly; Secure; SameSite=None; Max-Age=86400`,
                 },
             };
         } else {
