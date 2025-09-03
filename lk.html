@@ -272,7 +272,7 @@
             try {
                 const userData = localStorage.getItem('user');
                 if (!userData) {
-                    window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
+                    window.location.href = 'https://lk.pro-culinaria.ru';
                     return;
                 }
                 const user = JSON.parse(userData);
@@ -285,7 +285,7 @@
             } catch (e) {
                 console.error('Ошибка при чтении данных пользователя из localStorage:', e);
                 localStorage.removeItem('user');
-                window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
+                window.location.href = 'https://lk.pro-culinaria.ru';
                 return;
             }
             equalizeTiles();
@@ -294,7 +294,7 @@
         document.getElementById('logoutButton').addEventListener('click', async function() {
             localStorage.removeItem('user');
             await fetch('/.netlify/functions/logout', { method: 'POST' });
-            window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
+            window.location.href = 'https://lk.pro-culinaria.ru';
         });
 
         document.querySelector('.links-section a[href*="get-content"]').addEventListener('click', async function(event) {
