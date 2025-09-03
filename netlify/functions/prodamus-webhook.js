@@ -25,10 +25,10 @@ const handleProdamusWebhook = async (client, payload) => {
     const paymentSum = parseFloat(payload.sum);
     if (paymentSum === 350.00) {
         accessDays = 30;
-        subscriptionType = '30_days';
+        subscriptionType = '30';
     } else if (paymentSum === 3000.00) {
         accessDays = 365;
-        subscriptionType = '365_days';
+        subscriptionType = '365';
     } else {
         return {
             statusCode: 200,
