@@ -82,7 +82,7 @@ exports.handler = async (event) => {
                     <li>E-mail: ${email}</li>
                     <li>Пароль: ${password}</li>
                 </ul>
-                <p>Вы можете войти в свой личный кабинет по этой ссылке: <a href="https://pro-culinaria-lk.proculinaria-book.ru">Войти</a></p>
+                <p>Вы можете войти в свой личный кабинет по этой ссылке: <a href="https://lk.pro-culinaria.ru">Войти</a></p>
                 <p>С уважением,<br>Команда Pro-Culinaria</p>
             `,
         };
