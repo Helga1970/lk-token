@@ -27,18 +27,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (endDate && endDate.getTime() >= now.getTime()) {
                 // Подписка активна
                 userSubscriptionElement.textContent = 'Действующая';
-                const formattedDate = endDate.toLocaleString('ru-RU', {
+
+                // Форматируем только дату
+                const formattedDate = endDate.toLocaleDateString('ru-RU', {
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                    day: 'numeric'
                 });
-                subscriptionEndDateElement.textContent = formattedDate;
+
+                // Форматируем только время (в 24-часовом формате)
+                const formattedTime = endDate.toLocaleTimeString('ru-RU', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+
+                // Объединяем дату и время для отображения
+                subscriptionEndDateElement.textContent = `${formattedDate}, ${formattedTime}`;
+
             } else {
                 // Подписки нет или она неактивна
                 userSubscriptionElement.textContent = 'Подписка не активна';
-                subscriptionEndDateElement.textContent = ''; // Пустое поле, как вы и просили
+                subscriptionEndDateElement.textContent = ''; // Пустое поле
             }
             
         } catch (error) {
