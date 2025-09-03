@@ -93,7 +93,7 @@ exports.handler = async (event) => {
             return {
                 statusCode: 302,
                 headers: {
-                    'Location': 'https://pro-culinaria-lk.proculinaria-book.ru/',
+                    'Location': 'https://lk.pro-culinaria.ru/',
                 },
             };
         } else {
