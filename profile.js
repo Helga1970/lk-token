@@ -1,47 +1,110 @@
-// Код для profile.js
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Загрузка данных пользователя (в реальном приложении нужно получать с сервера)
-    const user = {
-        name: "Имя Пользователя", // Замените на реальное имя
-        email: "user@example.com", // Замените на реальный email
-        subscription: "30 дней" // Замените на реальный статус
-    };
-
-    document.getElementById('userName').textContent = user.name;
-    document.getElementById('userEmail').textContent = user.email;
-    document.getElementById('userSubscription').textContent = user.subscription;
-
-    const form = document.getElementById('profileForm');
+document.addEventListener('DOMContentLoaded', () => {
+    const profileForm = document.getElementById('profileForm');
     const statusMessage = document.getElementById('statusMessage');
+    const userNameElement = document.getElementById('userName');
+    const userEmailElement = document.getElementById('userEmail');
+    const userSubscriptionElement = document.getElementById('userSubscription');
+    const subscriptionEndDateElement = document.getElementById('subscriptionEndDate');
+    
+    // Функция для загрузки и отображения данных пользователя
+    async function fetchUserData() {
+        try {
+            const response = await fetch('/.netlify/functions/get-profile-data'); 
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Ошибка загрузки данных профиля.');
+            }
+            const data = await response.json();
+            
+            // Заполняем элементы данными
+            userNameElement.textContent = data.name || 'Имя не указано';
+            userEmailElement.textContent = data.email || 'Email не указан'; 
+            
+            // Отображаем статус подписки и срок действия
+            const now = new Date();
+            const endDate = data.access_end_date ? new Date(data.access_end_date) : null;
 
-    form.addEventListener('submit', async (e) => {
+            if (endDate && endDate.getTime() >= now.getTime()) {
+                // Подписка активна
+                userSubscriptionElement.textContent = 'Действующая';
+
+                // Форматируем только дату
+                const formattedDate = endDate.toLocaleDateString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Форматируем только время (в 24-часовом формате)
+                const formattedTime = endDate.toLocaleTimeString('ru-RU', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+
+                // Объединяем дату и время для отображения
+                subscriptionEndDateElement.textContent = `${formattedDate}, ${formattedTime}`;
+
+            } else {
+                // Подписки нет или она неактивна
+                userSubscriptionElement.textContent = 'Подписка не активна';
+                subscriptionEndDateElement.textContent = ''; // Пустое поле
+            }
+            
+        } catch (error) {
+            console.error('Ошибка:', error);
+            statusMessage.style.display = 'block';
+            statusMessage.classList.add('error');
+            statusMessage.textContent = error.message;
+        }
+    }
+    
+    // Функция для отправки данных формы
+    profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const name = document.getElementById('name').value;
         const currentPassword = document.getElementById('currentPassword').value;
         const newPassword = document.getElementById('newPassword').value;
-
-        // 2. Отправка данных на сервер
-        const response = await fetch('/.netlify/functions/update-profile', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name,
-                currentPassword,
-                newPassword
-            })
-        });
-
-        const result = await response.json();
-
-        // 3. Отображение результата
-        statusMessage.style.display = 'block';
-        if (response.ok) {
-            statusMessage.className = 'message success';
-            statusMessage.textContent = 'Профиль успешно обновлен!';
-        } else {
-            statusMessage.className = 'message error';
-            statusMessage.textContent = result.message || 'Произошла ошибка при обновлении профиля.';
+        
+        const body = {
+            name: name || undefined,
+            currentPassword,
+            newPassword: newPassword || undefined
+        };
+        
+        try {
+            const response = await fetch('/.netlify/functions/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+            
+            const data = await response.json();
+            
+            statusMessage.style.display = 'block';
+            statusMessage.textContent = data.message;
+            
+            if (response.ok) {
+                statusMessage.classList.remove('error');
+                statusMessage.classList.add('success');
+                // Обновляем данные на странице после успешного обновления
+                fetchUserData(); 
+            } else {
+                statusMessage.classList.remove('success');
+                statusMessage.classList.add('error');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            statusMessage.style.display = 'block';
+            statusMessage.classList.remove('success');
+            statusMessage.classList.add('error');
+            statusMessage.textContent = 'Ошибка сервера. Пожалуйста, попробуйте позже.';
         }
     });
+    
+    // Загружаем данные при первой загрузке страницы
+    fetchUserData();
 });
