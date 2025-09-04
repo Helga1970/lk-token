@@ -231,7 +231,7 @@
 <body>
     <div class="nav-menu">
         <a href="https://pro-culinaria.ru/">🏠 На главную</a>
-        <a href="https://lk.pro-culinaria.ru/lk.html" class="active">Личный кабинет</a>
+        <a href="https://pro-culinaria-lk.proculinaria-book.ru/lk.html" class="active">Личный кабинет</a>
         <a href="/profile.html">Мой профиль</a>
     </div>
 
@@ -272,7 +272,7 @@
             try {
                 const userData = localStorage.getItem('user');
                 if (!userData) {
-                    window.location.href = 'https://lk.pro-culinaria.ru';
+                    window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
                     return;
                 }
                 const user = JSON.parse(userData);
@@ -285,7 +285,7 @@
             } catch (e) {
                 console.error('Ошибка при чтении данных пользователя из localStorage:', e);
                 localStorage.removeItem('user');
-                window.location.href = 'https://lk.pro-culinaria.ru';
+                window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
                 return;
             }
             equalizeTiles();
@@ -294,7 +294,7 @@
         document.getElementById('logoutButton').addEventListener('click', async function() {
             localStorage.removeItem('user');
             await fetch('/.netlify/functions/logout', { method: 'POST' });
-            window.location.href = 'https://lk.pro-culinaria.ru';
+            window.location.href = 'https://pro-culinaria-lk.proculinaria-book.ru';
         });
 
         document.querySelector('.links-section a[href*="get-content"]').addEventListener('click', async function(event) {
