@@ -1,174 +1,81 @@
-// functions/auth.js
+// netlify/functions/auth.js
 
-// Хелпер: создание JWT
-async function createJWT(payload, secret, expiresInSec = 120) {
-  const header = { alg: "HS256", typ: "JWT" };
-  const now = Math.floor(Date.now() / 1000);
-  const body = { ...payload, iat: now, exp: now + expiresInSec };
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const serverless = require('serverless-http');
 
-  const encoder = new TextEncoder();
-  const encodeBase64Url = (obj) =>
-    btoa(JSON.stringify(obj))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_");
+const app = express();
 
-  const headerEncoded = encodeBase64Url(header);
-  const bodyEncoded = encodeBase64Url(body);
-  const unsignedToken = `${headerEncoded}.${bodyEncoded}`;
+// Секретный ключ для подписи токена (должен быть задан в Netlify → Environment variables)
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
+// Домен фронтенда (твой сайт)
+const FRONTEND_URL = "https://pro-culinaria-lk.proculinaria-book.ru";
 
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    encoder.encode(unsignedToken)
-  );
+// --- Middleware ---
+app.use(express.json());
+app.use(cookieParser());
 
-  const signatureEncoded = btoa(
-    String.fromCharCode(...new Uint8Array(signature))
-  )
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
+// CORS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", FRONTEND_URL);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
 
-  return `${unsignedToken}.${signatureEncoded}`;
-}
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
-// Хелпер: проверка JWT
-async function verifyJWT(token, secret) {
-  const [headerB64, bodyB64, signatureB64] = token.split(".");
-  if (!headerB64 || !bodyB64 || !signatureB64) return null;
+// --- Роуты ---
 
-  const encoder = new TextEncoder();
-  const unsignedToken = `${headerB64}.${bodyB64}`;
+// Логин
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
 
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["verify"]
-  );
+  if (email === 'admin@example.com' && password === 'admin') {
+    const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
 
-  const signature = Uint8Array.from(
-    atob(signatureB64.replace(/-/g, "+").replace(/_/g, "/")),
-    (c) => c.charCodeAt(0)
-  );
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // HTTPS в продакшне
+      sameSite: 'Lax'
+      // domain не указываем — иначе Netlify не запишет
+    });
 
-  const valid = await crypto.subtle.verify(
-    "HMAC",
-    key,
-    signature,
-    encoder.encode(unsignedToken)
-  );
-
-  if (!valid) return null;
-
-  const body = JSON.parse(
-    atob(bodyB64.replace(/-/g, "+").replace(/_/g, "/"))
-  );
-
-  const now = Math.floor(Date.now() / 1000);
-  if (body.exp && body.exp < now) return null;
-
-  return body;
-}
-
-// Хелпер: извлечение cookies
-function parseCookies(request) {
-  const cookie = request.headers.get("Cookie") || "";
-  return Object.fromEntries(
-    cookie.split(";").map((c) => {
-      const [k, v] = c.trim().split("=");
-      return [k, v];
-    })
-  );
-}
-
-export async function onRequest(context) {
-  const { request, env } = context;
-  const url = new URL(request.url);
-
-  // CORS заголовки
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Headers":
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-  };
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 200, headers: corsHeaders });
+    return res.status(200).json({ success: true });
   }
 
-  // --- Login ---
-  if (url.pathname === "/api/login" && request.method === "POST") {
-    const { email, password } = await request.json();
+  res.status(401).json({ message: 'Неверный email или пароль' });
+});
 
-    if (email === "admin@example.com" && password === "admin") {
-      const token = await createJWT({ email, role: "admin" }, env.JWT_SECRET);
+// Дашборд
+app.get('/api/dashboard', (req, res) => {
+  const token = req.cookies.token;
 
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-          "Set-Cookie": `token=${token}; HttpOnly; Secure; SameSite=None; Path=/`,
-        },
-      });
-    } else {
-      return new Response(
-        JSON.stringify({ message: "Неверный email или пароль" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Доступ запрещен' });
     }
-  }
+    res.json({ message: 'Привет, ' + user.email + '!' });
+  });
+});
 
-  // --- Dashboard ---
-  if (url.pathname === "/api/dashboard" && request.method === "GET") {
-    const cookies = parseCookies(request);
-    const token = cookies.token;
-    if (!token) {
-      return new Response(JSON.stringify({ message: "Токен не предоставлен" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+// Логаут
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Lax'
+  });
+  res.status(200).json({ success: true, message: 'Вы успешно вышли из системы.' });
+});
 
-    const user = await verifyJWT(token, env.JWT_SECRET);
-    if (!user) {
-      return new Response(JSON.stringify({ message: "Доступ запрещен" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(
-      JSON.stringify({ message: `Привет, ${user.email}!` }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
-  // --- Logout ---
-  if (url.pathname === "/api/logout" && request.method === "POST") {
-    return new Response(
-      JSON.stringify({ success: true, message: "Вы успешно вышли из системы." }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-          "Set-Cookie": `token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`,
-        },
-      }
-    );
-  }
-
-  return new Response("Not found", { status: 404, headers: corsHeaders });
-}
+module.exports.handler = serverless(app);
