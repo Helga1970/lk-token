@@ -23,13 +23,12 @@ const handleProdamusWebhook = async (client, payload) => {
     let accessDays;
     let subscriptionType;
     const paymentSum = parseFloat(payload.sum);
-
     if (paymentSum === 350.00) {
         accessDays = 30;
-        subscriptionType = accessDays; // Это число: 30
+        subscriptionType = '30_days';
     } else if (paymentSum === 3000.00) {
         accessDays = 365;
-        subscriptionType = accessDays; // Это число: 365
+        subscriptionType = '365_days';
     } else {
         return {
             statusCode: 200,
@@ -51,47 +50,12 @@ const handleProdamusWebhook = async (client, payload) => {
         const updateQuery = 'UPDATE users SET subscription_type = $1, access_end_date = $2 WHERE email = $3';
         const updateValues = [subscriptionType, newEndDate.toISOString(), customerEmail];
         await client.query(updateQuery, updateValues);
-        
-        // НОВОЕ: Проверяем, является ли платеж рекуррентным.
-        if (payload.payment_init === 'manual') {
-            const transporter = nodemailer.createTransport({
-                host: 'in-v3.mailjet.com',
-                port: 587,
-                secure: false,
-                auth: {
-                    user: '51db8ea3183fdd19e18f7cb18e52c32d',
-                    pass: '98289e767513278bd19fc129544da3b6'
-                }
-            });
-
-            const endDate = new Date(newEndDate);
-            const formattedEndDate = endDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-            const mailOptions = {
-                from: 'pro-culinaria@pro-culinaria.ru',
-                to: customerEmail,
-                subject: 'Доступ к Личному кабинету',
-                html: `
-                <h2>Здравствуйте, ${customerName}!</h2>
-                <p>Благодарим за оплату. Ваш доступ к материалам открыт на ${accessDays} дней, до ${formattedEndDate} включительно.</p>
-                <p>Ваши данные для входа в Личный кабинет:</p>
-                <ul>
-                    <li>Email: ${customerEmail}</li>
-                    <li>Пароль: ${existingUser.password}</li>
-                </ul>
-                <p>Войдите в свой Личный кабинет, чтобы получить доступ к материалам.</p>
-                <p>Ссылка на ЛК: https://lk.pro-culinaria.ru</p>
-                `,
-            };
-            await transporter.sendMail(mailOptions);
-        }
     } else {
         const accessEndDate = new Date();
         accessEndDate.setDate(accessEndDate.getDate() + accessDays);
         const insertQuery = 'INSERT INTO users (email, password, name, subscription_type, access_end_date) VALUES ($1, $2, $3, $4, $5) RETURNING *';
         const insertValues = [customerEmail, password, customerName, subscriptionType, accessEndDate.toISOString()];
         await client.query(insertQuery, insertValues);
-
         const transporter = nodemailer.createTransport({
             host: 'in-v3.mailjet.com',
             port: 587,
@@ -107,7 +71,7 @@ const handleProdamusWebhook = async (client, payload) => {
         const formattedEndDate = endDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
         const mailOptions = {
-            from: 'pro-culinaria@pro-culinaria.ru',
+            from: 'pro-culinaria@proculinaria.ru',
             to: customerEmail,
             subject: 'Доступ к Личному кабинету',
             html: `
@@ -119,7 +83,7 @@ const handleProdamusWebhook = async (client, payload) => {
                 <li>Пароль: ${password}</li>
             </ul>
             <p>Войдите в свой Личный кабинет, чтобы получить доступ к материалам.</p>
-            <p>Ссылка на ЛК: https://lk.pro-culinaria.ru</p>
+            <p>Ссылка на ЛК: https://pro-culinaria-lk.proculinaria-book.ru</p>
             `,
         };
         await transporter.sendMail(mailOptions);
@@ -138,7 +102,7 @@ exports.handler = async (event) => {
     });
     try {
         await client.connect();
-
+        
         // Обработка разных типов запросов
         let requestBody;
         if (event.headers['content-type'] && event.headers['content-type'].includes('application/x-www-form-urlencoded')) {
@@ -165,10 +129,10 @@ exports.handler = async (event) => {
         const query = 'SELECT * FROM users WHERE email = $1 AND password = $2';
         const values = [email, password];
         const res = await client.query(query, values);
-
+        
         if (res.rows.length > 0) {
             const user = res.rows[0];
-
+            
             // Генерация JWT-токена
             const token = jwt.sign(
                 { userId: user.user_id, email: user.email },
@@ -185,7 +149,7 @@ exports.handler = async (event) => {
                 }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Set-Cookie': `token=${token}; Path=/; Domain=.pro-culinaria.ru; HttpOnly; Secure; SameSite=None; Max-Age=86400`,
+                    'Set-Cookie': `token=${token}; Path=/; Domain=.proculinaria-book.ru; HttpOnly; Secure; SameSite=None; Max-Age=86400`,
                 },
             };
         } else {
